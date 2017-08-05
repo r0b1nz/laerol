@@ -6,24 +6,41 @@ require "db/connect.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (!isset($_POST['username'], $_POST['password'])) {
 		return;
+		echo 'hi0;0';
 	}
 
 	$user = $_POST['username'];
 	$pass = $_POST['password'];
 
+	if (is_null($user) || is_null($pass)) {
+		return;
+		echo 'hi';
+	}
+
+	// TODO: Check for SQL Injections
+
 	// echo 'USer: ' . $user . $pass;
 	$sql = 'SELECT * FROM emp_info where designation = \'' . $user . '\'';
 	$result = $conn->query($sql);
-	$result = $result->fetch_assoc();
-	if ($result['password'] == $pass) {
-		$_SESSION['user'] = $user;
-		$_SESSION['pass'] = $pass;
-		header('Location: Review');
+	if ($result->num_rows < 1) {
+		invalid();
 	} else {
-		echo '<div class="alert alert-danger">
+		$result = $result->fetch_assoc();
+		if ($result['password'] == $pass) {
+			$_SESSION['user'] = $user;
+			$_SESSION['pass'] = $pass;
+			header('Location: Review');
+		} else {
+			invalid();
+		}		
+	}
+
+}
+
+function invalid() {
+	echo '<div class="alert alert-danger">
 		  <strong>Wrong!</strong> username or password.
 		</div>';
-	}
 }
 ?>
 
