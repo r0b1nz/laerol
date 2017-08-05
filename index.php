@@ -6,16 +6,22 @@ require "db/connect.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (!isset($_POST['username'], $_POST['password'])) {
 		return;
-		echo 'hi0;0';
 	}
 
 	$user = $_POST['username'];
 	$pass = $_POST['password'];
 
 	if (is_null($user) || is_null($pass)) {
+		invalid();
 		return;
-		echo 'hi';
 	}
+
+	$user = str_replace("'", "", $user);
+	$user = str_replace('"', "", $user);
+
+	$pass = str_replace("'", "", $pass);
+	$pass = str_replace('"', "", $pass);
+
 
 	// TODO: Check for SQL Injections
 
