@@ -1,5 +1,6 @@
 <?php
 session_start();
+session_unset();
 require "db/connect.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -36,12 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}		
 	}
 
-}
-
-function invalid() {
-	echo '<div class="alert alert-danger">
-		  <strong>Wrong!</strong> username or password.
-		</div>';
 }
 
 ?>

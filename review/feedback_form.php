@@ -1,8 +1,59 @@
+<?php
+  session_start();
+  require "../db/connect.php";
+  $user = $_SESSION['user'];
+
+  //For testing
+  $_SESSION['feedbackFor'] = 'BIO';
+
+  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['feedbackFor'])) {
+    header('Location: ../');
+    exit();
+  }
+
+  //Check if $_SESSION['feedbackFor'] is a manager
+  $isManagerSQL = 'SELECT 1 from emp_info where manager = \'' . $_SESSION['feedbackFor'] . '\'';
+  $isManagerResult = $conn->query($isManagerSQL);
+  if ($isManagerResult->num_rows < 1) {
+    // Not a manager, Cannot take reivew
+    echo $_SESSION['feedbackFor'] . 'Not a manager';
+    exit();
+  }
+
+  // Get the ReviewCount
+  // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
+  $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
+  $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+
+  // if the feedback is already done.
+  $repeatSQL = 'SELECT 1 FROM emp_feedback WHERE review_count = ' . $reviewCount . '
+                AND designation = \'' . $_SESSION["feedbackFor"] . '\' 
+                AND reviewer = \'' . $user . '\'';
+  if ($conn->query($repeatSQL)->num_rows > 0) {
+    echo 'Feedback already submitted. Please go back and give feedback for another employee';
+    exit();
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $prefix = 'competency';
+    for ($c = 1; $c < 6; $c++) { 
+      for ($q=1; $q < 6; $q++) { 
+        $fieldName = $prefix . $c . '_q' . $q;
+        $answer = "None";
+        if (isset($_POST[$fieldName])) {
+          $answer = $_POST[$fieldName];
+        }
+        echo $fieldName . ':' . $answer . '<br>'; // No values from the view
+      }
+    }
+  }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Loreal: Login</title>
+    <title>Loreal: Feedback form</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="../css/bootstrap-theme.min.css">
@@ -17,12 +68,12 @@
   </header>
     <div class="container center_div">
 
-    <h1>Feedback form</h1>
-    <form>
+    <h1>Feedback form: <strong><?php echo $_SESSION['feedbackFor'] ?></strong></h1>
+    <form method="post">
     <h3>Competency 1</h3>
       <div class="form-group">
         <label for="competency1_q1">Question 1</label><br>
-        <label class="radio-inline"><input type="radio" name="competency1_q1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency1_q1" value="1">1</label>
         <label class="radio-inline"><input type="radio" name="competency1_q1">2</label>
         <label class="radio-inline"><input type="radio" name="competency1_q1">3</label>
         <label class="radio-inline"><input type="radio" name="competency1_q1">4</label>
