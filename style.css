@@ -1,0 +1,20 @@
+header {
+	padding: 5px;
+	padding-bottom: 0;
+	text-align: center;
+}
+
+.heading{
+	color: white;
+	font-weight: bold;
+}
+
+body{
+	background-color: black;
+}
+
+.center_div{
+    margin: 0 auto;
+    width:60%;
+    background-color: white;
+}
