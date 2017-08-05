@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 require "db/connect.php";
@@ -16,16 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		return;
 	}
 
+	//Check SQL Injection 
 	$user = str_replace("'", "", $user);
 	$user = str_replace('"', "", $user);
-
 	$pass = str_replace("'", "", $pass);
 	$pass = str_replace('"', "", $pass);
 
-
-	// TODO: Check for SQL Injections
-
-	// echo 'USer: ' . $user . $pass;
 	$sql = 'SELECT * FROM emp_info where designation = \'' . $user . '\'';
 	$result = $conn->query($sql);
 	if ($result->num_rows < 1) {
@@ -48,6 +43,7 @@ function invalid() {
 		  <strong>Wrong!</strong> username or password.
 		</div>';
 }
+
 ?>
 
 <!DOCTYPE html>
