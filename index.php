@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($result['password'] == $pass) {
 			$_SESSION['user'] = $user;
 			$_SESSION['pass'] = $pass;
-			header('Location: Review');
+			header('Location: Review/choose_feedback.php');
 		} else {
 			invalid();
 		}		
