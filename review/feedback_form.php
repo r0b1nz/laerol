@@ -73,7 +73,7 @@
     <h3>Competency 1</h3>
       <div class="form-group">
         <label for="competency1_q1">Question 1</label><br>
-        <label class="radio-inline"><input type="radio" name="competency1_q1" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency1_q1" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency1_q1" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency1_q1" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency1_q1" value="4">4</label>
@@ -81,7 +81,7 @@
       </div>
       <div class="form-group">
         <label for="competency1_q2">Question 2</label><br>
-        <label class="radio-inline"><input type="radio" name="competency1_q2" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency1_q2" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency1_q2" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency1_q2" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency1_q2" value="4">4</label>
@@ -89,7 +89,7 @@
       </div>
       <div class="form-group">
         <label for="competency1_q3">Question 3</label><br>
-        <label class="radio-inline"><input type="radio" name="competency1_q3" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency1_q3" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency1_q3" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency1_q3" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency1_q3" value="4">4</label>
@@ -97,7 +97,7 @@
       </div>
       <div class="form-group">
         <label for="competency1_q4">Question 4</label><br>
-        <label class="radio-inline"><input type="radio" name="competency1_q4" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency1_q4" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency1_q4" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency1_q4" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency1_q4" value="4">4</label>
@@ -105,7 +105,7 @@
       </div>
       <div class="form-group">
         <label for="competency1_q5">Question 5</label><br>
-        <label class="radio-inline"><input type="radio" name="competency1_q5" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency1_q5" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency1_q5" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency1_q5" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency1_q5" value="4">4</label>
@@ -115,7 +115,7 @@
       <h3>Competency 2</h3>
       <div class="form-group">
         <label for="competency2_q1">Question 1</label><br>
-        <label class="radio-inline"><input type="radio" name="competency2_q1" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency2_q1" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency2_q1" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency2_q1" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency2_q1" value="4">4</label>
@@ -281,7 +281,8 @@
         <label class="radio-inline"><input type="radio" name="competency5_q5" value="5">5</label>
       </div>
 
-      <button type="submit" class="btn btn-default submit">Submit</button>
+      <button type="submit" class="btn btn-default btn-block">Submit</button>
+
     </form>
 
     </div> <!-- /container -->
