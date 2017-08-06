@@ -26,6 +26,7 @@ header h1{
 
 body{
 	background-color: black;
+	padding: 5%;
 }
 
 .main{
@@ -41,3 +42,4 @@ body{
 table .do_center{
 	text-align: center;
 }
+
