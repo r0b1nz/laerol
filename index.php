@@ -1,25 +1,27 @@
-
 <?php
 session_start();
+session_unset();
 require "db/connect.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (!isset($_POST['username'], $_POST['password'])) {
 		return;
-		echo 'hi0;0';
 	}
 
 	$user = $_POST['username'];
 	$pass = $_POST['password'];
 
 	if (is_null($user) || is_null($pass)) {
+		invalid();
 		return;
-		echo 'hi';
 	}
 
-	// TODO: Check for SQL Injections
+	//Check SQL Injection 
+	$user = str_replace("'", "", $user);
+	$user = str_replace('"', "", $user);
+	$pass = str_replace("'", "", $pass);
+	$pass = str_replace('"', "", $pass);
 
-	// echo 'USer: ' . $user . $pass;
 	$sql = 'SELECT * FROM emp_info where designation = \'' . $user . '\'';
 	$result = $conn->query($sql);
 	if ($result->num_rows < 1) {
@@ -37,11 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-function invalid() {
-	echo '<div class="alert alert-danger">
-		  <strong>Wrong!</strong> username or password.
-		</div>';
-}
 ?>
 
 <!DOCTYPE html>
