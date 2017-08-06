@@ -1,3 +1,43 @@
+<?php
+  session_start();
+  require "../db/connect.php";
+  
+  if (!authCheck($_SESSION['user'], $_SESSION['pass'])) {
+    header('Location: ../');
+    exit();
+  }
+
+  $user = $_SESSION['user'];
+
+  $getUserLevel = 'SELECT level from emp_info where designation = \'' . $user . '\'';
+  $result = $conn->query($getUserLevel);
+  if ($result->num_rows != 1) {
+    echo 'Error in user\'s designation levels';
+    exit();
+  }
+  $level = $result->fetch_assoc()['level'];
+  echo 'Level: ' . $level;
+
+  $feedbackList = array();
+  array_push($feedbackList, $user);
+
+  if ($level == 0) {
+    $sql = getUsersSQL(1);
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        array_push($feedbackList, $row['designation']);
+      }
+    }
+  }
+
+
+  function getUsersSQL($lvl) {
+    return 'SELECT designation from emp_info where level = ' . $lvl;;
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +57,14 @@
     
   <div class="container">
       <form class="form-select" name="form1" method="post">
-      	<button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Self Feedback</button>
+      	<!-- <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Self Feedback</button> -->
+        <!-- <a href="feedback_form.php?d=BIO" class="btn btn-lg btn-block" role="button">Self Feedback</a> -->
+        <?php
+          foreach ($feedbackList as $designation) {
+            echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '" class="btn btn-lg btn-block" role="button">
+            ' . strtoupper($designation) . '</a>';
+          }
+        ?>
       </form>
   </div> <!-- /container -->
 

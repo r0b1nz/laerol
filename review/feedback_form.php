@@ -1,10 +1,15 @@
 <?php
   session_start();
   require "../db/connect.php";
+  $feedbackQuestions = 5;
   $user = $_SESSION['user'];
 
+  if (is_null($_GET['d']) or empty($_GET['d'])) {
+    header('Location: choose_feedback.php'); 
+  }
+
   //For testing
-  $_SESSION['feedbackFor'] = 'BIO';
+  $_SESSION['feedbackFor'] = $_GET['d'];
 
   if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['feedbackFor'])) {
     header('Location: ../');
@@ -19,6 +24,8 @@
     echo $_SESSION['feedbackFor'] . 'Not a manager';
     exit();
   }
+
+  $feedbackFor = $_SESSION['feedbackFor']; // TODO: Add SQL Injection validation
 
   // Get the ReviewCount
   // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
@@ -36,15 +43,36 @@
 
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $prefix = 'competency';
-    for ($c = 1; $c < 6; $c++) { 
+    $scores = array();
+    for ($c = 1; $c <= $feedbackQuestions; $c++) { 
+      $sum = 0.0;
+      $totalQuestions = 0;
       for ($q=1; $q < 6; $q++) { 
         $fieldName = $prefix . $c . '_q' . $q;
-        $answer = "None";
+        $answer = 0;
+        
         if (isset($_POST[$fieldName])) {
           $answer = $_POST[$fieldName];
-        }
-        echo $fieldName . ':' . $answer . '<br>'; // No values from the view
+          $totalQuestions++;
+          $sum = $sum + $answer;
+        }        
+        // echo $fieldName . ':' . $answer . '<br>'; // No values from the view
       }
+      $avg = $sum / $totalQuestions;
+      $scores[$c - 1] = round($avg, 2);
+    }
+
+    $avgScore = array_sum($scores) / $feedbackQuestions;
+    $insertSQL = 'INSERT INTO emp_feedback VALUES(' . $reviewCount . ', 
+                    \'' . $feedbackFor . '\', \'' . $user . '\', 
+                    ' . $scores[0] . ', '. $scores[1] . ', 
+                    ' . $scores[2] . ', '. $scores[3] . ', 
+                    ' . $scores[4] . ', ' . $avgScore . ')';
+    echo $insertSQL;
+    if ($conn->query($insertSQL) === FALSE) {
+      echo '<script>alert("Error in saving feedback")</script>';
+    } else {
+      echo '<script>alert("Thank you for the feedback")</script>';
     }
   }
 
