@@ -1,0 +1,3 @@
+- Disabling options in the feedback menu OR Don't display completed feedbacks
+- Buttons to link page
+- How will the HR know that everyone has completed the feedback? or these many feedbacks are left from these many employees.

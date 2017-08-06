@@ -11,7 +11,7 @@
   //For testing
   $_SESSION['feedbackFor'] = $_GET['d'];
 
-  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['feedbackFor'])) {
+  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['feedbackFor']) || $_SESSION['isHR']) {
     header('Location: ../');
     exit();
   }

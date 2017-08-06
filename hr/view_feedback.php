@@ -1,3 +1,20 @@
+<?php
+  session_start();
+  require "../db/connect.php";
+  
+  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['isHR'])) {
+    header('Location: ../');
+    exit();
+  }
+
+  // Get the ReviewCount
+  // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
+  $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
+  $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+
+  $getManagers = 'SELECT a.designation as designation FROM emp_info a, emp_info b WHERE a.designation = b.manager';
+  $result = $conn->query($getManagers);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,21 +42,29 @@
         </tr>
       </thead>
       <tbody>
+<!--    TEMPLATE for reference. 
+TODO: Add hyperlink to the button
         <tr>
           <th scope="row">1</th>
           <td class="do_center">Plant Director</td>
           <td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>
         </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td class="do_center">Functional Head</td>
-          <td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td class="do_center">Resource Manager</td>
-          <td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>
-        </tr>
+ -->
+        <?php
+          if ($result->num_rows > 0) {
+            $managerCounter = 1;
+            while ($manager = $result->fetch_assoc()) {
+              echo '<tr>';
+              echo '<th scope="row">' . $managerCounter . '</th>';
+              echo '<td class="do_center">' . $manager['designation'] . '</td>';
+              echo '<td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>';
+              echo '</tr>';
+              $managerCounter++;
+            }
+          }
+        ?>
+
+
       </tbody>
     </table>
   </div> <!-- /container -->

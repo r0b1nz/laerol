@@ -2,7 +2,7 @@
   session_start();
   require "../db/connect.php";
   
-  if (!authCheck($_SESSION['user'], $_SESSION['pass'])) {
+  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || $_SESSION['isHR']) {
     header('Location: ../');
     exit();
   }
@@ -21,6 +21,7 @@
   $feedbackList = array();
   array_push($feedbackList, $user);
 
+  // TODO: Add conditions for showing the feedback links
   if ($level == 0) {
     $sql = getUsersSQL(1);
     $result = $conn->query($sql);

@@ -1,3 +1,11 @@
+<?php
+  session_start();
+  require "../db/connect.php";
+  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['isHR'])) {
+    header('Location: ../');
+    exit();
+  }
+?>
 <!DOCTYPE html>
 <html>
 <head>
