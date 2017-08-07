@@ -30,7 +30,7 @@
 <body>
   <header>
     <h1 class="heading choose">L'OREAL</h1>
-    <button class="btn btn-sm"><a href="/laerol/hr/choose_function.php">Home</a></button>
+    <a href="/laerol/hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
   </header>
     
   <div class="container center_div">

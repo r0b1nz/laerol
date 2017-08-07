@@ -21,14 +21,14 @@
 <body>
 	<header>
 		<h1 class="heading choose">L'OREAL</h1>
-    <button class="btn btn-sm"><a href="/laerol/hr/choose_function.php">Home</a></button>
-    <button class="btn btn-sm"><a href="/laerol/">Log Out</a></button>
+    <a href="/laerol/hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
+    <a href="/laerol/"><button class="btn btn-sm">Log Out</button></a>
 	</header>
     
   <div class="container">
-      	<button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit"><a href="/laerol/hr/credentials.php">View Employee Credentials</a></button>
-        <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit"><a href="/laerol/hr/feedback.php">View Employee Feedback</a></button>
-        <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit"><a href="/laerol/hr/review_cycle.php">Start New Review Cycle</a></button>
+      	<a href="/laerol/hr/credentials.php"><button class="btn btn-lg btn-block">View Employee Credentials</button></a><br>
+        <a href="/laerol/hr/feedback.php"><button class="btn btn-lg btn-block">View Employee Feedback</button></a><br>
+        <a href="/laerol/hr/review_cycle.php"><button class="btn btn-lg btn-block">Start New Review Cycle</button></a><br>
 
         <script type="text/javascript">
         function alertFunc()
