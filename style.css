@@ -26,6 +26,10 @@ header h1{
 
 body{
 	background-color: black;
+	padding-top: 2%;
+	padding-left: 5%;
+	padding-right: 5%;
+	padding-bottom: 2%;
 }
 
 .main{
@@ -41,3 +45,4 @@ body{
 table .do_center{
 	text-align: center;
 }
+
