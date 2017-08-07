@@ -11,7 +11,8 @@ $conn = new mysqli($servername, $username, $password, $dbName);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
-echo "db Connected successfully";
+// echo "db Connected successfully";
+error_reporting(E_ALL ^ E_NOTICE);  
 
 function authCheck($user, $pass) {
 	$sql = 'SELECT password from emp_info where designation = \'' . $user . '\'';

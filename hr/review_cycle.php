@@ -1,3 +1,24 @@
+<?php
+  session_start();
+  require "../db/connect.php";
+  
+  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['isHR'])) {
+    header('Location: ../');
+    exit();
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $updateReviewCount = 'INSERT INTO review_cycle VALUES (CURRENT_DATE(), NULL)';
+    if ($conn->query($updateReviewCount) === FALSE) {
+      echo 'Error in updating review count';
+    }
+  }
+
+  // Get the ReviewCount
+  // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
+  $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
+  $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,8 +37,10 @@
   </header>
     
   <div class="container">
-    <h3 class="heading2">Review Count is 1</h3>
-    <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Start New Review Cycle</button>
+    <h3 class="heading2">Review Count is <?php echo $reviewCount ?></h3>
+    <form method="POST">
+      <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Start New Review Cycle</button>
+    </form>
   </div> <!-- /container -->
 
 </body>

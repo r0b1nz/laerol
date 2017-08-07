@@ -1,3 +1,15 @@
+<?php
+  session_start();
+  require "../db/connect.php";
+  
+  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['isHR'])) {
+    header('Location: ../');
+    exit();
+  }
+
+  $getAllUsers = 'SELECT * FROM emp_info';
+  $result = $conn->query($getAllUsers);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,24 +38,22 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Plant Director</td>
-          <td>PD@Loreal</td>
-          <td>password</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Functional Head</td>
-          <td>FH@Loreal</td>
-          <td>password</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>Resource Manager</td>
-          <td>RM@Loreal</td>
-          <td>password</td>
-        </tr>
+
+        <?php
+          if ($result->num_rows > 0) {
+            $counter = 1;
+            while($user = $result->fetch_assoc()) {
+              echo '<tr>';
+              echo '<th scope="row">' . $counter . '</th>';
+              echo '<td>' . $user['designation'] . '</td>';
+              echo '<td>' . $user['designation'] . '</td>';
+              echo '<td>' . $user['password'] . '</td>';
+              echo '</tr>';
+              $counter++;
+            }
+          }
+        ?>
+
       </tbody>
     </table>
   </div> <!-- /container -->

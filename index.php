@@ -2,6 +2,7 @@
 session_start();
 session_unset();
 require "db/connect.php";
+$HR_LEVEL = -2;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (!isset($_POST['username'], $_POST['password'])) {
@@ -31,7 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($result['password'] == $pass) {
 			$_SESSION['user'] = $user;
 			$_SESSION['pass'] = $pass;
-			header('Location: Review/choose_feedback.php');
+			if ($result['level'] == $HR_LEVEL) {
+				$_SESSION['isHR'] = true;
+				header('Location: hr');
+			} else {
+				header('Location: Review/choose_feedback.php');
+			}
+			
 		} else {
 			invalid();
 		}		
