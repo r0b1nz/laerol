@@ -21,14 +21,21 @@
 <body>
 	<header>
 		<h1 class="heading choose">L'OREAL</h1>
+    <button class="btn btn-sm"><a href="/laerol/hr/choose_function.php">Home</a></button>
+    <button class="btn btn-sm"><a href="/laerol/">Log Out</a></button>
 	</header>
     
   <div class="container">
-      <form class="form-select" name="form1" method="post">
-      	<button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">View Employee Credentials</button>
-        <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">View Employee Feedback</button>
-        <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Start New Review Cycle</button>
-      </form>
+      	<button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit"><a href="/laerol/hr/credentials.php">View Employee Credentials</a></button>
+        <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit"><a href="/laerol/hr/feedback.php">View Employee Feedback</a></button>
+        <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit"><a href="/laerol/hr/review_cycle.php">Start New Review Cycle</a></button>
+
+        <script type="text/javascript">
+        function alertFunc()
+        {
+          alert("Successfully Started New Cycle");
+        }
+        </script>
   </div> <!-- /container -->
 
 </body>

@@ -13,6 +13,7 @@
 <body>
   <header>
     <h1 class="heading choose">L'OREAL</h1>
+    <button class="btn btn-sm"><a href="/laerol/hr/choose_function.php">Home</a></button>
   </header>
   
   <div class="row jumbotron">

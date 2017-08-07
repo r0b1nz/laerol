@@ -54,6 +54,8 @@
 <body>
 	<header>
 		<h1 class="heading choose">L'OREAL</h1>
+        <button class="btn btn-sm"><a href="/laerol/review/choose_feedback.php">Home</a></button>
+    <button class="btn btn-sm"><a href="/laerol/">Log Out</a></button>
 	</header>
     
   <div class="container">
