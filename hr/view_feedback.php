@@ -12,7 +12,7 @@
   $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
   $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
 
-  $getManagers = 'SELECT a.designation as designation FROM emp_info a, emp_info b WHERE a.designation = b.manager';
+  $getManagers = 'SELECT DISTINCT a.designation as designation FROM emp_info a, emp_info b WHERE a.designation = b.manager';
   $result = $conn->query($getManagers);
 ?>
 <!DOCTYPE html>

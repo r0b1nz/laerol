@@ -21,7 +21,7 @@
   $isManagerResult = $conn->query($isManagerSQL);
   if ($isManagerResult->num_rows < 1) {
     // Not a manager, Cannot take reivew
-    echo $_SESSION['feedbackFor'] . 'Not a manager';
+    echo 'Oops, ' . $_SESSION['feedbackFor'] . ' is not a manager.';
     exit();
   }
 
@@ -68,11 +68,12 @@
                     ' . $scores[0] . ', '. $scores[1] . ', 
                     ' . $scores[2] . ', '. $scores[3] . ', 
                     ' . $scores[4] . ', ' . $avgScore . ')';
-    echo $insertSQL;
+    // echo $insertSQL;
     if ($conn->query($insertSQL) === FALSE) {
       echo '<script>alert("Error in saving feedback")</script>';
     } else {
       echo '<script>alert("Thank you for the feedback")</script>';
+      header('Location: choose_feedback.php');
     }
   }
 

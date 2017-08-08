@@ -16,12 +16,24 @@
     exit();
   }
   $level = $result->fetch_assoc()['level'];
-  echo 'Level: ' . $level;
+  // echo 'Level: ' . $level;
 
   $feedbackList = array();
-  array_push($feedbackList, $user);
+  $isUserManager = 'SELECT count(*) as c from emp_info where manager = \'' . $user . '\'';
+  $result = $conn->query($isUserManager);
+  if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    if ($row['c'] > 0) {
+      // User manages more than 0 employees, therefore user is a manager. 
+      array_push($feedbackList, $user);
+    }
+  }
+  
 
   // TODO: Add conditions for showing the feedback links
+
+  // LEVLE 0
+  // Give feedback only for Level 1
   if ($level == 0) {
     $sql = getUsersSQL(1);
     $result = $conn->query($sql);
@@ -29,6 +41,61 @@
     if ($result->num_rows > 0) {
       while ($row = $result->fetch_assoc()) {
         array_push($feedbackList, $row['designation']);
+      }
+    }
+  }
+
+  // LEVEL 1
+  // Give feedback for level 0, 1, and 2(if any managers under the user's team)
+  if ($level == 1) {
+
+    // Add Level 1 peers
+    $sql = getUsersSQL(1);
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        if ($row['designation'] != $user){
+          array_push($feedbackList, $row['designation']);
+        }
+      }
+    }
+
+    // Add Level 0
+    $sql = getUsersSQL(0);
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        if ($row['designation'] != $user){
+          array_push($feedbackList, $row['designation']);
+        }
+      }
+    }
+
+
+    // Add level 2, if user manages the emp, and emp is a manager. 
+    // SELECT a.designation FROM emp_info a, emp_info b WHERE a.level = 2 AND a.manager = 'BIO' and b.manager = a.designation
+    $sql = 'SELECT a.designation as designation 
+            FROM emp_info a, emp_info b 
+            WHERE a.level = 2 AND a.manager = \'' . $user . '\' and b.manager = a.designation';
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      while($row = $result->fetch_assoc()) {
+        array_push($feedbackList, $row['designation']);
+      }
+    }
+  }
+
+  // For Further levels, just take the feedback for the MANAGER
+  if ($level > 1) {
+    $sql = 'SELECT manager from emp_info where designation = \'' . $user . '\'';
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        array_push($feedbackList, $row['manager']);
       }
     }
   }
@@ -59,15 +126,11 @@
 	</header>
     
   <div class="container text-center">
-      <form class="form-select" name="form1" method="post">
-      	<!-- <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Self Feedback</button> -->
-        <!-- <a href="feedback_form.php?d=BIO" class="btn btn-lg btn-block" role="button">Self Feedback</a> -->
         <?php
           foreach ($feedbackList as $designation) {
             echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '"><button class="btn btn-lg" role="button">' . strtoupper($designation) . '</button></a>';
           }
         ?>
-      </form>
   </div> <!-- /container -->
 
 </body>

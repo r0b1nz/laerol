@@ -27,8 +27,8 @@
 
   // $reviewCount = 2;
 
-  $withoutSelf = 'SELECT sum(competency1) as c1, sum(competency2) as c2, sum(competency3) as c3, 
-                  sum(competency4) as c4, sum(competency5) as c5, sum(competency_agg) as cavg
+  $withoutSelf = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
+                  avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
                   FROM emp_feedback 
                   WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount;
 
