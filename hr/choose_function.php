@@ -21,14 +21,14 @@
 <body>
 	<header>
 		<h1 class="heading choose">L'OREAL</h1>
-    <a href="/laerol/hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
-    <a href="/laerol/"><button class="btn btn-sm">Log Out</button></a>
+    <a href="choose_function.php"><button class="btn btn-sm">Home</button></a>
+    <a href="../"><button class="btn btn-sm">Log Out</button></a>
 	</header>
     
   <div class="container">
-      	<a href="/laerol/hr/credentials.php"><button class="btn btn-lg btn-block">View Employee Credentials</button></a><br>
-        <a href="/laerol/hr/feedback.php"><button class="btn btn-lg btn-block">View Employee Feedback</button></a><br>
-        <a href="/laerol/hr/review_cycle.php"><button class="btn btn-lg btn-block">Start New Review Cycle</button></a><br>
+      	<a href="credentials.php"><button class="btn btn-lg btn-block">View Employee Credentials</button></a><br>
+        <a href="feedback.php"><button class="btn btn-lg btn-block">View Employee Feedback</button></a><br>
+        <a href="review_cycle.php"><button class="btn btn-lg btn-block">Start New Review Cycle</button></a><br>
 
         <script type="text/javascript">
         function alertFunc()
