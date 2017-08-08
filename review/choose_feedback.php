@@ -53,18 +53,18 @@
 </head>
 <body>
 	<header>
-		<h1 class="heading choose">L'OREAL</h1>
+    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <a href="../review/choose_feedback.php"><button class="btn btn-sm">Home</button></a>
     <a href="../"><button class="btn btn-sm">Log Out</button></a>
 	</header>
     
-  <div class="container">
+  <div class="container text-center">
       <form class="form-select" name="form1" method="post">
       	<!-- <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Self Feedback</button> -->
         <!-- <a href="feedback_form.php?d=BIO" class="btn btn-lg btn-block" role="button">Self Feedback</a> -->
         <?php
           foreach ($feedbackList as $designation) {
-            echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '"><button class="btn btn-lg btn-block" role="button">' . strtoupper($designation) . '</button></a>';
+            echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '"><button class="btn btn-lg" role="button">' . strtoupper($designation) . '</button></a>';
           }
         ?>
       </form>

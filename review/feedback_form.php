@@ -92,7 +92,7 @@
 
   <body>
   <header>
-    <h1 class="heading">L'OREAL</h1>
+    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <button class="btn btn-sm"><a href="../review/choose_feedback.php">Home</a></button>
   </header>
     <div class="container center_div">
@@ -152,7 +152,7 @@
       </div>
       <div class="form-group">
         <label for="competency2_q2">Question 2</label><br>
-        <label class="radio-inline"><input type="radio" name="competency2_q2" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency2_q2" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency2_q2" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency2_q2" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency2_q2" value="4">4</label>
@@ -160,7 +160,7 @@
       </div>
       <div class="form-group">
         <label for="competency2_q3">Question 3</label><br>
-        <label class="radio-inline"><input type="radio" name="competency2_q3" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency2_q3" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency2_q3" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency2_q3" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency2_q3" value="4">4</label>
@@ -168,7 +168,7 @@
       </div>
       <div class="form-group">
         <label for="competency2_q4">Question 4</label><br>
-        <label class="radio-inline"><input type="radio" name="competency2_q4" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency2_q4" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency2_q4" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency2_q4" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency2_q4" value="4">4</label>
@@ -176,7 +176,7 @@
       </div>
       <div class="form-group">
         <label for="competency2_q5">Question 5</label><br>
-        <label class="radio-inline"><input type="radio" name="competency2_q5" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency2_q5" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency2_q5" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency2_q5" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency2_q5" value="4">4</label>
@@ -187,7 +187,7 @@
       <h3>Competency 3</h3>
       <div class="form-group">
         <label for="competency3_q1">Question 1</label><br>
-        <label class="radio-inline"><input type="radio" name="competency3_q1" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency3_q1" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency3_q1" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency3_q1" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency3_q1" value="4">4</label>
@@ -195,7 +195,7 @@
       </div>
       <div class="form-group">
         <label for="competency3_q2">Question 2</label><br>
-        <label class="radio-inline"><input type="radio" name="competency3_q2" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency3_q2" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency3_q2" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency3_q2" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency3_q2" value="4">4</label>
@@ -203,7 +203,7 @@
       </div>
       <div class="form-group">
         <label for="competency3_q3">Question 3</label><br>
-        <label class="radio-inline"><input type="radio" name="competency3_q3" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency3_q3" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency3_q3" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency3_q3" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency3_q3" value="4">4</label>
@@ -211,7 +211,7 @@
       </div>
       <div class="form-group">
         <label for="competency3_q4">Question 4</label><br>
-        <label class="radio-inline"><input type="radio" name="competency3_q4" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency3_q4" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency3_q4" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency3_q4" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency3_q4" value="4">4</label>
@@ -219,7 +219,7 @@
       </div>
       <div class="form-group">
         <label for="competency3_q5">Question 5</label><br>
-        <label class="radio-inline"><input type="radio" name="competency3_q5" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency3_q5" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency3_q5" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency3_q5" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency3_q5" value="4">4</label>
@@ -229,7 +229,7 @@
       <h3>Competency 4</h3>
       <div class="form-group">
         <label for="competency4_q1">Question 1</label><br>
-        <label class="radio-inline"><input type="radio" name="competency4_q1" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency4_q1" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency4_q1" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency4_q1" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency4_q1" value="4">4</label>
@@ -237,7 +237,7 @@
       </div>
       <div class="form-group">
         <label for="competency4_q2">Question 2</label><br>
-        <label class="radio-inline"><input type="radio" name="competency4_q2" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency4_q2" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency4_q2" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency4_q2" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency4_q2" value="4">4</label>
@@ -245,7 +245,7 @@
       </div>
       <div class="form-group">
         <label for="competency4_q3">Question 3</label><br>
-        <label class="radio-inline"><input type="radio" name="competency4_q3" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency4_q3" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency4_q3" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency4_q3" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency4_q3" value="4">4</label>
@@ -253,7 +253,7 @@
       </div>
       <div class="form-group">
         <label for="competency4_q4">Question 4</label><br>
-        <label class="radio-inline"><input type="radio" name="competency4_q4" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency4_q4" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency4_q4" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency4_q4" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency4_q4" value="4">4</label>
@@ -261,7 +261,7 @@
       </div>
       <div class="form-group">
         <label for="competency4_q5">Question 5</label><br>
-        <label class="radio-inline"><input type="radio" name="competency4_q5" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency4_q5" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency4_q5" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency4_q5" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency4_q5" value="4">4</label>
@@ -271,7 +271,7 @@
       <h3>Competency 5</h3>
       <div class="form-group">
         <label for="competency5_q1">Question 1</label><br>
-        <label class="radio-inline"><input type="radio" name="competency5_q1" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency5_q1" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency5_q1" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency5_q1" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency5_q1" value="4">4</label>
@@ -279,7 +279,7 @@
       </div>
       <div class="form-group">
         <label for="competency5_q2">Question 2</label><br>
-        <label class="radio-inline"><input type="radio" name="competency5_q2" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency5_q2" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency5_q2" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency5_q2" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency5_q2" value="4">4</label>
@@ -287,7 +287,7 @@
       </div>
       <div class="form-group">
         <label for="competency5_q3">Question 3</label><br>
-        <label class="radio-inline"><input type="radio" name="competency5_q3" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency5_q3" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency5_q3" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency5_q3" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency5_q3" value="4">4</label>
@@ -295,7 +295,7 @@
       </div>
       <div class="form-group">
         <label for="competency5_q4">Question 4</label><br>
-        <label class="radio-inline"><input type="radio" name="competency5_q4" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency5_q4" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency5_q4" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency5_q4" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency5_q4" value="4">4</label>
@@ -303,7 +303,7 @@
       </div>
       <div class="form-group">
         <label for="competency5_q5">Question 5</label><br>
-        <label class="radio-inline"><input type="radio" name="competency5_q5" value="1">1</label>
+        <label class="radio-inline"><input type="radio" name="competency5_q5" value="1" required>1</label>
         <label class="radio-inline"><input type="radio" name="competency5_q5" value="2">2</label>
         <label class="radio-inline"><input type="radio" name="competency5_q5" value="3">3</label>
         <label class="radio-inline"><input type="radio" name="competency5_q5" value="4">4</label>

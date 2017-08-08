@@ -33,14 +33,14 @@
 </head>
 <body>
   <header>
-    <h1 class="heading choose">L'OREAL</h1>
+    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
   </header>
     
-  <div class="container">
+  <div class="container text-center">
     <h3 class="heading2">Review Count is <?php echo $reviewCount ?></h3>
     <form method="POST">
-      <button name="Submit" id="submit" class="btn btn-lg btn-block" type="submit">Start New Review Cycle</button>
+      <button name="Submit" id="submit" class="btn btn-lg" type="submit">Start New Review Cycle</button>
     </form>
   </div> <!-- /container -->
 

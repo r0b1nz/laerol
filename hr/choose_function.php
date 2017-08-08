@@ -20,15 +20,15 @@
 </head>
 <body>
 	<header>
-		<h1 class="heading choose">L'OREAL</h1>
+    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <a href="choose_function.php"><button class="btn btn-sm">Home</button></a>
     <a href="../"><button class="btn btn-sm">Log Out</button></a>
 	</header>
 
-  <div class="container">
-      	<a href="credentials.php"><button class="btn btn-lg btn-block">View Employee Credentials</button></a><br>
-        <a href="view_feedback.php"><button class="btn btn-lg btn-block">View Employee Feedback</button></a><br>
-        <a href="review_cycle.php"><button class="btn btn-lg btn-block">Start New Review Cycle</button></a><br>
+  <div class="container text-center">
+      	<a href="credentials.php"><button class="btn btn-lg">View Employee Credentials</button></a>&nbsp;&nbsp;
+        <a href="view_feedback.php"><button class="btn btn-lg">View Employee Feedback</button></a>&nbsp;&nbsp;
+        <a href="review_cycle.php"><button class="btn btn-lg">Start New Review Cycle</button></a>&nbsp;&nbsp;
 
         <script type="text/javascript">
         function alertFunc()
