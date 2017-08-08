@@ -27,7 +27,7 @@
     
   <div class="container">
       	<a href="credentials.php"><button class="btn btn-lg btn-block">View Employee Credentials</button></a><br>
-        <a href="feedback.php"><button class="btn btn-lg btn-block">View Employee Feedback</button></a><br>
+        <a href="view_feedback.php"><button class="btn btn-lg btn-block">View Employee Feedback</button></a><br>
         <a href="review_cycle.php"><button class="btn btn-lg btn-block">Start New Review Cycle</button></a><br>
 
         <script type="text/javascript">
