@@ -64,8 +64,7 @@
         <!-- <a href="feedback_form.php?d=BIO" class="btn btn-lg btn-block" role="button">Self Feedback</a> -->
         <?php
           foreach ($feedbackList as $designation) {
-            echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '" class="btn btn-lg btn-block" role="button">
-            ' . strtoupper($designation) . '</a>';
+            echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '"><button class="btn btn-lg btn-block" role="button">' . strtoupper($designation) . '</button></a>';
           }
         ?>
       </form>

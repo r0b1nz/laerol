@@ -25,10 +25,10 @@
     <a href="/laerol/"><button class="btn btn-sm">Log Out</button></a>
 	</header>
     
-  <div class="container">
-      	<a href="/laerol/hr/credentials.php"><button class="btn btn-lg btn-block">View Employee Credentials</button></a><br>
-        <a href="/laerol/hr/feedback.php"><button class="btn btn-lg btn-block">View Employee Feedback</button></a><br>
-        <a href="/laerol/hr/review_cycle.php"><button class="btn btn-lg btn-block">Start New Review Cycle</button></a><br>
+  <div class="container text-center">
+      	<a href="/laerol/hr/credentials.php"><button type ="button" class="btn btn-lg">View Employee Credentials</button></a><br><br>
+        <a href="/laerol/hr/feedback.php"><button type ="button" class="btn btn-lg">View Employee Feedback</button></a><br><br>
+        <a href="/laerol/hr/review_cycle.php"><button type ="button" class="btn btn-lg">Start New Review Cycle</button></a><br><br>
 
         <script type="text/javascript">
         function alertFunc()

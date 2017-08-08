@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$_SESSION['pass'] = $pass;
 			if ($result['level'] == $HR_LEVEL) {
 				$_SESSION['isHR'] = true;
-				header('Location: hr');
+				header('Location: hr/choose_function.php');
 			} else {
 				header('Location: Review/choose_feedback.php');
 			}
@@ -62,10 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   </head>
 
   <body>
+  	<header>
+		<h1 class="heading choose">L'OREAL</h1>
+	</header>
     <div class="container">
 
       <form class="form-signin" name="form1" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
+        <h2 class="heading">Sign In</h2>
         <input name="username" id="username" type="text" class="form-control" placeholder="Username" autofocus>
         <input name="password" id="password" type="password" class="form-control" placeholder="Password">
         <button name="Submit" id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
