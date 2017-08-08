@@ -92,7 +92,7 @@
 
   <body>
   <header>
-    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
+    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'ORÉAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <button class="btn btn-sm"><a href="../review/choose_feedback.php">Home</a></button>
   </header>
     <div class="container center_div">
