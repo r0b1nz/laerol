@@ -29,7 +29,7 @@
 </head>
 <body>
   <header>
-    <h1 class="heading choose">L'OREAL</h1>
+    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
   </header>
     

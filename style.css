@@ -9,6 +9,7 @@ header {
 	font-weight: bold;
 }
 
+
 .container .heading2{
 	color: white;
 	font-weight: bold;
@@ -18,6 +19,10 @@ header {
 
 header{
 	margin: 30px;
+}
+
+header h4 .choose{
+	color: white;
 }
 
 header h1{
@@ -45,4 +50,3 @@ body{
 table .do_center{
 	text-align: center;
 }
-

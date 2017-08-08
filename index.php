@@ -62,10 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   </head>
 
   <body>
+  	<header>
+		<h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'ORÉAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
+	</header>
     <div class="container">
 
       <form class="form-signin" name="form1" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
+        <h2 style="color:white;font-weight:bold;text-align: center;">Sign In</h2>
         <input name="username" id="username" type="text" class="form-control" placeholder="Username" autofocus>
         <input name="password" id="password" type="password" class="form-control" placeholder="Password">
         <button name="Submit" id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
