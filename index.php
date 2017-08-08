@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$_SESSION['pass'] = $pass;
 			if ($result['level'] == $HR_LEVEL) {
 				$_SESSION['isHR'] = true;
-				header('Location: hr');
+				header('Location: hr/choose_function.php');
 			} else {
 				header('Location: Review/choose_feedback.php');
 			}

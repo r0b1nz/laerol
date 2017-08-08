@@ -30,7 +30,7 @@
 <body>
   <header>
     <h1 class="heading choose">L'OREAL</h1>
-    <a href="/laerol/hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
+    <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
   </header>
     
   <div class="container center_div">
@@ -58,7 +58,7 @@ TODO: Add hyperlink to the button
               echo '<tr>';
               echo '<th scope="row">' . $managerCounter . '</th>';
               echo '<td class="do_center">' . $manager['designation'] . '</td>';
-              echo '<td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>';
+              echo '<td class="do_center"><a href="feedback.php?for=' . $manager['designation'] . '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></a></td>';
               echo '</tr>';
               $managerCounter++;
             }
