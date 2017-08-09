@@ -26,15 +26,13 @@
 	</header>
 
   <div class="container text-center">
-      	<a href="credentials.php"><button class="btn btn-lg">View Employee Credentials</button></a>&nbsp;&nbsp;
-        <a href="view_feedback.php"><button class="btn btn-lg">View Employee Feedback</button></a>&nbsp;&nbsp;
-        <a href="review_cycle.php"><button class="btn btn-lg">Start New Review Cycle</button></a>&nbsp;&nbsp;
+      	<a href="credentials.php"><button style="width:400px;" class="btn btn-lg">View Employee Credentials</button></a><br><br>
+        <a href="view_feedback.php"><button style="width:400px;" class="btn btn-lg">View Employee Feedback</button></a><br><br>
+        <a href="review_cycle.php"><button style="width:400px;" class="btn btn-lg">Start New Review Cycle</button></a><br><br>
 
-        <script type="text/javascript">
-        function alertFunc()
-        {
-          alert("Successfully Started New Cycle");
-        }
+
+    };
+</script>
         </script>
   </div> <!-- /container -->
 

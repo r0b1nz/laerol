@@ -80,6 +80,7 @@
   <header>
     <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 5px;">L'ORÉAL: <?php echo $emp; ?></h1><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
+    <a href="../hr/view_feedback.php"><button class="btn btn-sm">Back</button></a>
   </header>
   
   <div class="row jumbotron">

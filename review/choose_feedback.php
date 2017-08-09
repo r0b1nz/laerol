@@ -128,7 +128,7 @@
   <div class="container text-center">
         <?php
           foreach ($feedbackList as $designation) {
-            echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '"><button class="btn btn-lg" role="button">' . strtoupper($designation) . '</button></a>&nbsp;&nbsp;&nbsp;';
+            echo '<a href="feedback_form.php?d=' . strtoupper($designation) . '"><button class="btn btn-lg" style="width:300px;"role="button">' . strtoupper($designation) . '</button></a><br><br>';
           }
         ?>
   </div> <!-- /container -->
