@@ -18,6 +18,10 @@
   // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
   $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
   $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+
+  // Update passwords
+  $updatePasswordSQL = 'UPDATE emp_info SET password = LEFT(UUID(), 8) WHERE designation <> \'HR\'';
+  $update = $conn->query($updatePasswordSQL);
 ?>
 <!DOCTYPE html>
 <html>
