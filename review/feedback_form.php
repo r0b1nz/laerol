@@ -94,7 +94,7 @@
   <body>
   <header>
     <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'ORÉAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
-    <button class="btn btn-sm"><a href="../review/choose_feedback.php">Home</a></button>
+    <a href="../review/choose_feedback.php"><button class="btn btn-sm">Home</button></a>
   </header>
     <div class="container center_div">
 
@@ -311,7 +311,17 @@
         <label class="radio-inline"><input type="radio" name="competency5_q5" value="5">5</label>
       </div>
 
-      <button type="submit" class="btn btn-default btn-block">Submit</button>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-bottom: 20px;">Submit</button>
+
+
+        <script type="text/javascript">
+        alertFunc();
+        function alertFunc()
+        {
+          alert("Successfully Submitted Review");
+          location.href = "../review/choose_feedback.php"
+        }
+        </script>
 
     </form>
 
