@@ -72,8 +72,16 @@
     if ($conn->query($insertSQL) === FALSE) {
       echo '<script>alert("Error in saving feedback")</script>';
     } else {
-      echo '<script>alert("Thank you for the feedback")</script>';
-      header('Location: choose_feedback.php');
+      // echo '<script>alert("Thank you for the feedback")</script>';
+      // header('Location: choose_feedback.php');
+      echo '<script type="text/javascript">
+        alertFunc();
+        function alertFunc()
+        {
+          alert("Successfully Submitted Review");
+          location.href = "../review/choose_feedback.php"
+        }
+        </script>';
     }
   }
 
@@ -314,14 +322,14 @@
       <button type="submit" class="btn btn-primary btn-block" style="margin-bottom: 20px;">Submit</button>
 
 
-        <script type="text/javascript">
+<!--         <script type="text/javascript">
         alertFunc();
         function alertFunc()
         {
           alert("Successfully Submitted Review");
           location.href = "../review/choose_feedback.php"
         }
-        </script>
+        </script> -->
 
     </form>
 
