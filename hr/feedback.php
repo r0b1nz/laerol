@@ -125,7 +125,7 @@
         color: "#A0EC37",
         dataPoints: [
         { y: 5, label: "PEOPLE DEVELOPER"},
-        { y: 4, label: "ENTREPRENEUR2"},
+        { y: 4, label: "ENTREPRENEUR"},
         { y: 5, label: "STRATEGIST"},        
         { y: 5, label: "INTEGRATOR"},        
         { y: 4, label: "INNOVATOR"}
