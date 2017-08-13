@@ -30,10 +30,6 @@
         <a href="view_feedback.php"><button style="width:400px;" class="btn btn-lg">View Employee Feedback</button></a><br><br>
         <a href="review_cycle.php"><button style="width:400px;" class="btn btn-lg">Start New Review Cycle</button></a><br><br>
 
-
-    };
-</script>
-        </script>
   </div> <!-- /container -->
 
 </body>

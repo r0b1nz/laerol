@@ -87,7 +87,7 @@
     <link rel="stylesheet" type="text/css" href="../css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <link rel="stylesheet" type="text/css" href="../style.css">
+    <link rel="stylesheet" type="text/css" href="../css/feedback_style.css">
     <script src="../canvasjs.min.js"></script>
       <script type="text/javascript">
   window.onload = function () {
@@ -137,11 +137,11 @@
         name: "Highest",
         color: "#A0EC37",
         dataPoints: [
-        { y: 5, label: "Competency1"},
-        { y: 4, label: "Competency2"},
-        { y: 5, label: "Competency3"},        
-        { y: 5, label: "Competency4"},        
-        { y: 4, label: "Competency5"}
+        { y: 5, label: "PEOPLE DEVELOPER"},
+        { y: 4, label: "ENTREPRENEUR"},
+        { y: 5, label: "STRATEGIST"},        
+        { y: 5, label: "INTEGRATOR"},        
+        { y: 4, label: "INNOVATOR"}
 
 
         ]
@@ -152,11 +152,11 @@
         name: "Average",
         color: "#37B3EC",          
         dataPoints: [
-        { y: 3.5, label: "Competency1"},
-        { y: 4, label: "Competency2"},
-        { y: 4.5, label: "Competency3"},        
-        { y: 3, label: "Competency4"},        
-        { y: 2, label: "Competency5"}
+        { y: 3.5, label: "PEOPLE DEVELOPER"},
+        { y: 4, label: "ENTREPRENEUR"},
+        { y: 4.5, label: "STRATEGIST"},        
+        { y: 3, label: "INTEGRATOR"},        
+        { y: 2, label: "INNOVATOR"}
 
 
         ]
@@ -167,11 +167,11 @@
         name: "Lowest",
         color: "#EC5637",
         dataPoints: [
-        { y: 2, label: "Competency1"},
-        { y: 3, label: "Competency2"},
-        { y: 2.5, label: "Competency3"},        
-        { y: 1.5, label: "Competency4"},        
-        { y: 1, label: "Competency5"}
+        { y: 2, label: "PEOPLE DEVELOPER"},
+        { y: 3, label: "ENTREPRENEUR"},
+        { y: 2.5, label: "STRATEGIST"},        
+        { y: 1.5, label: "INTEGRATOR"},        
+        { y: 1, label: "INNOVATOR"}
 
         ]
       }
@@ -185,44 +185,204 @@ chart.render();
 </head>
 <body>
   <header>
-    <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 5px;">L'ORÉAL: <?php echo $emp; ?></h1><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
+    <h1>L'ORÉAL: <?php echo $emp; ?></h1>
+    <h4>India</h4>
     <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
     <a href="../hr/view_feedback.php"><button class="btn btn-sm">Back</button></a>
   </header>
   
-  <div class="row jumbotron">
+  <div class="row jumbotron" style="background-color: white;">
     <div class="col-lg-12">
       <div class="container">
-        <table class="table">
-        <thead class="thead-inverse">
-          <tr>
-            <th>#</th>
-            <th>Competency</th>
-            <th>Self</th>
-            <th>Team</th>
-            <th>Others</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>PEOPLE DEVELOPER</td>
-            <td>4.5</td>
-            <td>3</td>
-            <td>4</td>
-          </tr>
-<!--           <?php
-            for ($i=0; $i < 5; $i++) { 
-              echo '<tr>';
-              echo  '<th scope="row">' . $i . '</th>';
-              echo  '<td>Competency ' . $i . '</td>';
-              echo  '<td>' . round($finalSelfScores[$i], 2) . '</td>';
-              echo  '<td>' . round($finalScores[$i], 2) . '</td>';
-              echo'</tr>';
-            }
-          ?> -->
-        </tbody>
-      </table>
+        <table class="table table-responsive table-hover">
+          <thead>
+                <tr><th></th><th><h4>Competency</h4></th><th><h4>Self</h4></th><th><h4>Team</h4></th><th><h4>Others</h4></th></tr>
+            </thead>
+            <tbody>
+                <tr class="clickable" data-toggle="collapse" id="row1" data-target=".row1">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>PEOPLE DEVELOPER</td>
+                    <td>4.5</td>
+                    <td>3</td>
+                    <td>4</td>
+                </tr>
+                <tr class="collapse row1">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Treats all individuals in a respectful and consistent manner</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row1">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Leverages diversity</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row1">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Stimulates learning</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row1">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Empowers and develops individuals to contribute their best</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+
+
+                <tr class="clickable" data-toggle="collapse" id="row2" data-target=".row2">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>ENTREPRENEUR</td>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row2">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Takes accountability with courage</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row2">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Builds and manages a customer centric organization</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row2">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Gives space for initiatives and enables teams to take risks</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row2">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Delivers with integrity both sustainable and short term results</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+
+
+                <tr class="clickable" data-toggle="collapse" id="row3" data-target=".row3">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>STRATEGIST</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>4</td>
+                </tr>
+                <tr class="collapse row3">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Builds an inspiring and shared vision </td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row3">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Creates strategic scenarios for growth</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row3">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Leads transformation by aligning organization and human capabilities</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row3">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Demonstrates sound judgment in decision making</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                
+
+                <tr class="clickable" data-toggle="collapse" id="row4" data-target=".row4">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>INTEGRATOR</td>
+                    <td>3.5</td>
+                    <td>2</td>
+                    <td>5</td>
+                </tr>
+                <tr class="collapse row4">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Fosters a climate of trust and constructive confrontation</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row4">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Develops collective performance of the team</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row4">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Enhances transversal cooperation</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row4">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Mobilizes stakeholders through active networking</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+
+                <tr class="clickable" data-toggle="collapse" id="row5" data-target=".row5">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>INNOVATOR</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>5</td>
+                </tr>
+                <tr class="collapse row5">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Puts the consumer as the central focus</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row5">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Challenges the status quo and strives for excellence</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row5">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Innovates beyond the product</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>
+                <tr class="collapse row5">
+                    <td><i class="glyphicon glyphicon-minus"></i></td>
+                    <td>Seizes what is just starting and opens new ventures</td>
+                    <td>2</td>
+                    <td>2</td>  
+                    <td>2</td>
+                </tr>                
+            </tbody>
+        </table>
       </div> <!-- /container -->
     </div>
 
@@ -231,31 +391,32 @@ chart.render();
         <table class="table">
         <thead class="thead-inverse">
           <tr>
-            <th>Aggregate</th>
-            <th>Value</th>
+            <th><h4 style="font-weight: bold;">Aggregate</h4></th>
+            <th><h4 style="font-weight: bold;">Value</h4></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="aggregate">
             <td>Self</td>
             <td><?php echo round($finalSelfScores[5], 2); ?></td>
           </tr>
-          <tr>
+          <tr class="aggregate">
             <td>Team</td>
             <td><?php echo round($finalScores[5]); ?></td>
           </tr>
-          <tr>
+          <tr class="aggregate">
             <td>Others</td>
             <td><?php echo round($finalScores[5]); ?></td>
           </tr>  
         </tbody>
       </table>
-        <div id="chartContainer" style="height: 300px; width: 100%;">
-  </div>
+        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
       </div> <!-- /container -->
     </div>
 
   </div>  
+  <script src="../js//jquery.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
 </body>
 </html>
 
