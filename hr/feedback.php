@@ -186,7 +186,7 @@ chart.render();
         <tbody>
           <tr>
             <th scope="row">1</th>
-            <td>Competency 1</td>
+            <td>PEOPLE DEVELOPER</td>
             <td>4.5</td>
             <td>3</td>
             <td>4</td>
