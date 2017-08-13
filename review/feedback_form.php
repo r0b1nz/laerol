@@ -96,7 +96,7 @@
     <link rel="stylesheet" type="text/css" href="../css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/main.css">
-    <link rel="stylesheet" type="text/css" href="../new_style.css">
+    <link rel="stylesheet" type="text/css" href="../css/form_style.css">
   </head>
 
   <body>
