@@ -11,14 +11,7 @@
     header('Location: ../hr');
   }
 
-  $emp = $_GET['for'];
-
-  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $updateReviewCount = 'INSERT INTO review_cycle VALUES (CURRENT_DATE(), NULL)';
-    if ($conn->query($updateReviewCount) === FALSE) {
-      echo 'Error in updating review count';
-    }
-  }
+  $emp = securityPipe($_GET['for']);
 
   // Get the ReviewCount
   // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);

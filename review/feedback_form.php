@@ -9,7 +9,7 @@
   }
 
   //For testing
-  $_SESSION['feedbackFor'] = $_GET['d'];
+  $_SESSION['feedbackFor'] = securityPipe($_GET['d']);
 
   if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['feedbackFor']) || $_SESSION['isHR']) {
     header('Location: ../');
@@ -52,7 +52,7 @@
         $answer = 0;
         
         if (isset($_POST[$fieldName])) {
-          $answer = $_POST[$fieldName];
+          $answer = securityPipe($_POST[$fieldName]);
           $totalQuestions++;
           $sum = $sum + $answer;
         }        

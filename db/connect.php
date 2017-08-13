@@ -36,4 +36,9 @@ function invalid() {
 		  <strong>Wrong!</strong> username or password.
 		</div>';
 }
+
+function securityPipe($input) {
+	$pattern = '/[^\da-z]+/i';
+	return preg_replace($pattern, ' ', $input);
+}
 ?>
