@@ -25,6 +25,22 @@
                   FROM emp_feedback 
                   WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount;
 
+                  
+  $team = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
+                  avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
+                  FROM emp_feedback 
+                  WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount . '
+                  and reviewer in (SELECT designation FROM emp_info WHERE manager = \''. $emp . '\')';
+
+                  
+  $manager = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
+                  avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
+                  FROM emp_feedback 
+                  WHERE designation = \'' . $emp . '\' and reviewer in (SELECT manager FROM emp_info WHERE designation = \'' . $emp . '\' ) and review_count = ' . $reviewCount;
+
+  // if level == 1, add peers too in the $manager sql
+
+
   $selfScores = 'SELECT sum(competency1) as c1, sum(competency2) as c2, sum(competency3) as c3, 
                   sum(competency4) as c4, sum(competency5) as c5, sum(competency_agg) as cavg
                   FROM emp_feedback 
@@ -32,6 +48,10 @@
 
   $scoresByOthers = $conn->query($withoutSelf);
   $scoresBySelf = $conn->query($selfScores);
+
+  $scoresByTeam = $conn->query($team);
+  $scoresByManager = 
+  echo $manager;
 
   $finalScores = array();
   $finalSelfScores = array();
