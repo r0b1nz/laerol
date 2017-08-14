@@ -50,7 +50,7 @@
   $scoresBySelf = $conn->query($selfScores);
 
   $scoresByTeam = $conn->query($team);
-  $scoresByManager = 
+  $scoresByManager = $conn->query($manager);
   echo $manager;
 
   $finalScores = array();
