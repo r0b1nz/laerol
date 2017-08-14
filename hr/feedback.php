@@ -17,64 +17,144 @@
   // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
   $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
   $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+  
+  // Get emp level
+  $level = 2;
+  $levelSQL = "SELECT level FROM emp_info WHERE designation = '{$emp}'";
+  $result = $conn->query($levelSQL);
 
-  // $reviewCount = 2;
+  if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $level = $row['level'];
+  }
+  echo $level;
 
-  $withoutSelf = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
-                  avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
-                  FROM emp_feedback 
-                  WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount;
+  $selfSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
+              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
+              FROM feedback 
+              WHERE review_count = {$reviewCount}
+              AND designation = '{$emp}'
+              AND reviewer = '{$emp}'
+              GROUP BY competency";
 
-                  
-  $team = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
-                  avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
-                  FROM emp_feedback 
-                  WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount . '
-                  and reviewer in (SELECT designation FROM emp_info WHERE manager = \''. $emp . '\')';
+  $teamSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
+              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
+              FROM feedback 
+              WHERE review_count = {$reviewCount}
+              AND designation = '{$emp}'
+              AND reviewer in (SELECT designation FROM emp_info WHERE manager = '{$emp}')
+              GROUP BY competency";
 
-                  
-  $manager = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
-                  avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
-                  FROM emp_feedback 
-                  WHERE designation = \'' . $emp . '\' and reviewer in (SELECT manager FROM emp_info WHERE designation = \'' . $emp . '\' ) and review_count = ' . $reviewCount;
+  $managerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
+              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
+              FROM feedback 
+              WHERE review_count = {$reviewCount}
+              AND designation = '{$emp}'
+              AND reviewer in (SELECT manager FROM emp_info WHERE designation = '{$emp}')
+              GROUP BY competency";
 
-  // if level == 1, add peers too in the $manager sql
+  if ($level == 1) {
+    $peerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
+              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
+              FROM feedback 
+              WHERE review_count = {$reviewCount}
+              AND designation = '{$emp}'
+              AND reviewer in (SELECT designation FROM emp_info WHERE level = $level AND designation <> '{$emp}')
+              GROUP BY competency";    
+    $peerScoreDAO = $conn->query($peerSQL);
+    $peerScore = array();
+    if ($peerScoreDAO->num_rows > 0) {
+      while ($row = $peerScoreDAO->fetch_assoc()) {
+        array_push($peerScore, $row);
+      }
+    }
 
-
-  $selfScores = 'SELECT sum(competency1) as c1, sum(competency2) as c2, sum(competency3) as c3, 
-                  sum(competency4) as c4, sum(competency5) as c5, sum(competency_agg) as cavg
-                  FROM emp_feedback 
-                  WHERE designation = \'' . $emp . '\' and reviewer = \'' . $emp . '\' and review_count = ' . $reviewCount;
-
-  $scoresByOthers = $conn->query($withoutSelf);
-  $scoresBySelf = $conn->query($selfScores);
-
-  $scoresByTeam = $conn->query($team);
-  $scoresByManager = $conn->query($manager);
-  echo $manager;
-
-  $finalScores = array();
-  $finalSelfScores = array();
-
-  if ($scoresByOthers->num_rows > 0) {
-    $score = $scoresByOthers->fetch_assoc();
-    array_push($finalScores, $score['c1']);
-    array_push($finalScores, $score['c2']);
-    array_push($finalScores, $score['c3']);
-    array_push($finalScores, $score['c4']);
-    array_push($finalScores, $score['c5']);
-    array_push($finalScores, $score['cavg']);
   }
 
-  if ($scoresBySelf->num_rows > 0) {
-    $score = $scoresBySelf->fetch_assoc();
-    array_push($finalSelfScores, $score['c1']);
-    array_push($finalSelfScores, $score['c2']);
-    array_push($finalSelfScores, $score['c3']);
-    array_push($finalSelfScores, $score['c4']);
-    array_push($finalSelfScores, $score['c5']);
-    array_push($finalSelfScores, $score['cavg']);
+
+  $selfScoresDAO = $conn->query($selfSQL);
+  $teamScoresDAO = $conn->query($teamSQL);
+  $managerScoreDAO = $conn->query($managerSQL);
+
+  $selfScore = array();
+  $teamScore = array();
+  $managerScore = array();
+
+  if ($selfScoresDAO->num_rows > 0) {
+    while ($row = $selfScoresDAO->fetch_assoc()) {
+      array_push($selfScore, $row);
+    }
   }
+
+  if ($teamScoresDAO->num_rows > 0) {
+    while ($row = $teamScoresDAO->fetch_assoc()) {
+      array_push($teamScore, $row);
+    }
+  }
+
+  if ($managerScoreDAO->num_rows > 0) {
+    while ($row = $managerScoreDAO->fetch_assoc()) {
+      array_push($managerScore, $row);
+    }
+  }
+
+
+  if (false) {
+    $withoutSelf = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
+                    avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
+                    FROM emp_feedback 
+                    WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount;
+
+                    
+    $team = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
+                    avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
+                    FROM emp_feedback 
+                    WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount . '
+                    and reviewer in (SELECT designation FROM emp_info WHERE manager = \''. $emp . '\')';
+
+                    
+    $manager = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
+                    avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
+                    FROM emp_feedback 
+                    WHERE designation = \'' . $emp . '\' and reviewer in (SELECT manager FROM emp_info WHERE designation = \'' . $emp . '\' ) and review_count = ' . $reviewCount;
+
+    // if level == 1, add peers too in the $manager sql
+
+
+    $selfScores = 'SELECT sum(competency1) as c1, sum(competency2) as c2, sum(competency3) as c3, 
+                    sum(competency4) as c4, sum(competency5) as c5, sum(competency_agg) as cavg
+                    FROM emp_feedback 
+                    WHERE designation = \'' . $emp . '\' and reviewer = \'' . $emp . '\' and review_count = ' . $reviewCount;
+
+    $scoresByOthers = $conn->query($withoutSelf);
+    $scoresBySelf = $conn->query($selfScores);
+
+    $scoresByTeam = $conn->query($team);
+    $scoresByManager = $conn->query($manager);
+    echo $manager;
+
+    $finalScores = array();
+    $finalSelfScores = array();
+
+    if ($scoresByOthers->num_rows > 0) {
+      $score = $scoresByOthers->fetch_assoc();
+      array_push($finalScores, $score['c1']);
+      array_push($finalScores, $score['c2']);
+      array_push($finalScores, $score['c3']);
+      array_push($finalScores, $score['c4']);
+      array_push($finalScores, $score['c5']);
+      array_push($finalScores, $score['cavg']);
+    }
+
+    if ($scoresBySelf->num_rows > 0) {
+      $score = $scoresBySelf->fetch_assoc();
+      array_push($finalSelfScores, $score['c1']);
+      array_push($finalSelfScores, $score['c2']);
+      array_push($finalSelfScores, $score['c3']);
+      array_push($finalSelfScores, $score['c4']);
+      array_push($finalSelfScores, $score['c5']);
+      array_push($finalSelfScores, $score['cavg']);
+    }}
 
 ?>
 <!DOCTYPE html>
@@ -199,188 +279,47 @@ chart.render();
                 <tr><th></th><th><h4>Competency</h4></th><th><h4>Self</h4></th><th><h4>Team</h4></th><th><h4>Others</h4></th></tr>
             </thead>
             <tbody>
-                <tr class="clickable" data-toggle="collapse" id="row1" data-target=".row1">
+
+            <?php
+              $competencyKeys = array('PEOPLE DEVELOPER',
+               'ENTREPRENEUR', 
+               'STRATEGIST', 
+               'INTEGRATOR', 
+               'INNOVATOR'
+               );
+
+              $competencyText = array('PEOPLE DEVELOPER' => ['Treats all individuals in a respectful and consistent manner', 'Leverages diversity',' Stimulates learning',' Empowers and develops individuals to contribute their best'],
+               'ENTREPRENEUR' => ['Takes accountability with courage', 'Builds and manages a customer centric organization', 'Gives space for initiatives and enables teams to take risks', 'Delivers with integrity both sustainable and short term results'], 
+               'STRATEGIST' => ['Builds an inspiring and shared vision', 'Creates strategic scenarios for growth', 'Leads transformation by aligning organization and human capabilities', 'Demonstrates sound judgment in decision making'], 
+               'INTEGRATOR' => ['Fosters a climate of trust and constructive confrontation', 'Develops collective performance of the team', 'Enhances transversal cooperation', 'Mobilizes stakeholders through active networking'], 
+               'INNOVATOR' => ['Puts the consumer as the central focus', 'Challenges the status quo and strives for excellence', 'Innovates beyond the product', 'Seizes what is just starting and opens new ventures']
+               );
+
+            ?>
+
+                <?php
+                for ($c=1; $c <= 5 ; $c++) { 
+                  echo '<tr class="clickable" data-toggle="collapse" id="row' . $c . '" data-target=".row' . $c . '">
                     <td><i class="glyphicon glyphicon-plus"></i></td>
-                    <td>PEOPLE DEVELOPER</td>
-                    <td>4.5</td>
-                    <td>3</td>
-                    <td>4</td>
-                </tr>
-                <tr class="collapse row1">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Treats all individuals in a respectful and consistent manner</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row1">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Leverages diversity</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row1">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Stimulates learning</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row1">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Empowers and develops individuals to contribute their best</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
+                    <td>' . $competencyKeys[$c-1] . '</td>
+                    <td>' . $selfScore[$c-1]['cagg'] . '</td>
+                    <td>' . $teamScore[$c-1]['cagg'] . '</td>
+                    <td>' . $managerScore[$c-1]['cagg'] . '</td>
+                    </tr>';
 
+                  for ($section=1; $section <= 4 ; $section++) { 
+                    echo '<tr class="collapse row' . $c . '">
+                      <td><i class="glyphicon glyphicon-minus"></i></td>
+                      <td>' . $competencyText[$competencyKeys[$c-1]][$section-1] . '</td>
+                      <td>' . $selfScore[$c-1]['s' . $section] . '</td>
+                      <td>' . $teamScore[$c-1]['s' . $section] . '</td>  
+                      <td>' . $managerScore[$c-1]['s' . $section] . '</td>
+                      </tr>';
+                  }
 
-                <tr class="clickable" data-toggle="collapse" id="row2" data-target=".row2">
-                    <td><i class="glyphicon glyphicon-plus"></i></td>
-                    <td>ENTREPRENEUR</td>
-                    <td>3</td>
-                    <td>5</td>
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row2">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Takes accountability with courage</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row2">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Builds and manages a customer centric organization</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row2">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Gives space for initiatives and enables teams to take risks</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row2">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Delivers with integrity both sustainable and short term results</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
+                }
 
-
-                <tr class="clickable" data-toggle="collapse" id="row3" data-target=".row3">
-                    <td><i class="glyphicon glyphicon-plus"></i></td>
-                    <td>STRATEGIST</td>
-                    <td>4</td>
-                    <td>5</td>
-                    <td>4</td>
-                </tr>
-                <tr class="collapse row3">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Builds an inspiring and shared vision </td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row3">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Creates strategic scenarios for growth</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row3">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Leads transformation by aligning organization and human capabilities</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row3">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Demonstrates sound judgment in decision making</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                
-
-                <tr class="clickable" data-toggle="collapse" id="row4" data-target=".row4">
-                    <td><i class="glyphicon glyphicon-plus"></i></td>
-                    <td>INTEGRATOR</td>
-                    <td>3.5</td>
-                    <td>2</td>
-                    <td>5</td>
-                </tr>
-                <tr class="collapse row4">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Fosters a climate of trust and constructive confrontation</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row4">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Develops collective performance of the team</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row4">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Enhances transversal cooperation</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row4">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Mobilizes stakeholders through active networking</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-
-                <tr class="clickable" data-toggle="collapse" id="row5" data-target=".row5">
-                    <td><i class="glyphicon glyphicon-plus"></i></td>
-                    <td>INNOVATOR</td>
-                    <td>4</td>
-                    <td>5</td>
-                    <td>5</td>
-                </tr>
-                <tr class="collapse row5">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Puts the consumer as the central focus</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row5">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Challenges the status quo and strives for excellence</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row5">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Innovates beyond the product</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>
-                <tr class="collapse row5">
-                    <td><i class="glyphicon glyphicon-minus"></i></td>
-                    <td>Seizes what is just starting and opens new ventures</td>
-                    <td>2</td>
-                    <td>2</td>  
-                    <td>2</td>
-                </tr>                
+                ?>
             </tbody>
         </table>
       </div> <!-- /container -->

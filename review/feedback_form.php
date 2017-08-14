@@ -33,15 +33,15 @@
   $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
 
   // if the feedback is already done.
-  $repeatSQL = 'SELECT 1 FROM emp_feedback WHERE review_count = ' . $reviewCount . '
+/*  $repeatSQL = 'SELECT 1 FROM emp_feedback WHERE review_count = ' . $reviewCount . '
                 AND designation = \'' . $_SESSION["feedbackFor"] . '\' 
                 AND reviewer = \'' . $user . '\'';
   if ($conn->query($repeatSQL)->num_rows > 0) {
     echo 'Feedback already submitted. Please go back and give feedback for another employee';
     exit();
-  }
+  }*/
 
-  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  /*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $prefix = 'competency';
     $scores = array();
     for ($c = 1; $c <= $feedbackQuestions; $c++) { 
@@ -83,7 +83,78 @@
         }
         </script>';
     }
+  }*/
+
+
+  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // vars: competency1_s1_q1
+    $competencyCount = 5;
+    $sections = 4;
+    $maxQPerSection = 5;
+
+    for ($c=1; $c <= $competencyCount = 5; $c++) { 
+      $section = array();
+      $totalSectionScore = 0;
+      $minSection = 10000;
+      $maxSection = -1;
+      // loop sections
+      for ($s=1; $s <= $sections ; $s++) { 
+        $min = 10000;
+        $max = -1;
+        $totalScore = 0;
+        $totalQuestions = 0;
+
+        for ($q=1; $q <= $maxQPerSection ; $q++) { 
+          $radioName = 'competency' . $c . '_s' . $s . '_q' . $q;
+          if (isset($_POST[$radioName])) {
+            if ($_POST[$radioName] > $max)
+              $max = $_POST[$radioName];
+            if ($_POST[$radioName] < $min)
+              $min = $_POST[$radioName];
+            $totalQuestions++;
+            $totalScore = $totalScore + $_POST[$radioName];
+          }
+        }
+
+        if ($totalQuestions == 0)
+          continue;
+        $sectionScore = round($totalScore / $totalQuestions, 2);
+        $totalSectionScore = $totalSectionScore + $sectionScore;
+        if ($sectionScore < $minSection)
+          $minSection = $sectionScore;
+        if ($sectionScore > $maxSection)
+          $maxSection = $sectionScore;
+
+
+        // array_push($section, $sectionScore . ';' . $min . ';' . $max);
+        array_push($section, $sectionScore);
+        $minSection = $min;
+        $maxSection = $max;
+      }
+      //make SQL and push ($section[], $totalSectionScore/$sections, $minSection, $maxSection) 
+      $competencyScore = round($totalSectionScore / $sections, 2);
+      $insertSQL = "INSERT INTO feedback VALUES ({$reviewCount}, '{$feedbackFor}', '{$user}', 
+                                                  {$c}, '{$section[0]}', '{$section[1]}',
+                                                  '{$section[2]}', '{$section[3]}',
+                                                  '{$competencyScore}', {$minSection}, {$maxSection})";
+      // echo $insertSQL;
+      if ($conn->query($insertSQL) === FALSE) {
+        echo '<script>alert("Error in saving feedback")</script>';
+      } else {
+        // echo '<script>alert("Thank you for the feedback")</script>';
+        // header('Location: choose_feedback.php');
+        echo '<script type="text/javascript">
+          alertFunc();
+          function alertFunc()
+          {
+            alert("Successfully Submitted Review");
+            location.href = "../review/choose_feedback.php"
+          }
+          </script>';
+      }
+    }
   }
+
 
 ?>
 <!DOCTYPE html>
@@ -107,7 +178,7 @@
   </header>
   <div class="container">
   <h1 align="center" class="feedback_center_div">Feedback Form</h1>
-    <form action="post" class="form_div">
+    <form method="POST" class="form_div">
       <h3 align="center">PEOPLE DEVELOPER - "Grow people to grow the business"</h3>
       <div class="questions">
       <h4 align="center">Treats all individuals in a respectful and consistent manner</h4>
