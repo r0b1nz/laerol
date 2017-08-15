@@ -60,7 +60,26 @@
               WHERE review_count = {$reviewCount}
               AND designation = '{$emp}'
               AND reviewer in (SELECT designation FROM emp_info WHERE level = $level AND designation <> '{$emp}')
-              GROUP BY competency";    
+              GROUP BY competency";  
+
+  // managerSQL => Manager + Peers (Level 0)
+  $managerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
+              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
+              FROM feedback 
+              WHERE review_count = {$reviewCount}
+              AND designation = '{$emp}'
+              AND reviewer in (SELECT designation FROM emp_info WHERE level = 1
+                               UNION SELECT manager FROM emp_info WHERE designation = '{$emp}') 
+              GROUP BY competency";
+
+  $onlyManagerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
+              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
+              FROM feedback 
+              WHERE review_count = {$reviewCount}
+              AND designation = '{$emp}'
+              AND reviewer in (SELECT manager FROM emp_info WHERE designation = '{$emp}')
+              GROUP BY competency";
+
     $peerScoreDAO = $conn->query($peerSQL);
     $peerScore = array();
     if ($peerScoreDAO->num_rows > 0) {
@@ -95,6 +114,88 @@
   if ($managerScoreDAO->num_rows > 0) {
     while ($row = $managerScoreDAO->fetch_assoc()) {
       array_push($managerScore, $row);
+    }
+  }
+
+  //Average score: 50% Team + 30% Peer/Mgr + 20% Mgr
+  $graphAvg = array();
+  $graphMin = array();
+  $graphMax = array();
+
+
+  if ($level == 1) {
+    $team = array();
+    $peer = array();
+    $mgr = array();
+    $onlyManagerScore = array();
+
+    $counter = 0;
+    foreach ($teamScore as $key => $value) {
+      $team[$counter++] = $value['cagg'];
+    }
+
+    $counter = 0;
+    foreach ($peerScore as $key => $value) {
+      $peer[$counter++] = $value['cagg'];
+    }
+
+    $onlyManagerDAO = $conn->query($onlyManagerSQL);
+    if ($onlyManagerDAO->num_rows > 0) {
+      while ($row = $onlyManagerDAO->fetch_assoc()) {
+        array_push($onlyManagerScore, $row);
+      }
+    }
+
+    $counter = 0;
+    foreach ($onlyManagerScore as $key => $value) {
+      $mgr[$counter++] = $value['cagg'];
+    }
+
+    $graphAvg = array();
+    $counter = 0;
+    foreach ($team as $key => $value) {
+      $graphAvg[$counter] = ($team[$counter] * 0.5) + ($peer[$counter] * 0.3) + ($mgr[$counter] * 0.2);
+      $counter++;
+    }
+
+    // $graphAvg = ($team * 0.5) + ($peer * 0.3) + ($mgr * 0.2);
+  } else {
+    $team = array();
+    $mgr = array();
+
+    $counter = 0;
+    foreach ($teamScore as $key => $value) {
+      $team[$counter++] = $value['cagg'];
+    }
+
+    $counter = 0;
+    foreach ($managerScore as $key => $value) {
+      $mgr[$counter++] = $value['cagg'];
+    }
+
+    $graphAvg = array();
+    $counter = 0;
+    foreach ($team as $key => $value) {
+      $graphAvg[$counter] = ($team[$counter] * 0.5) + ($mgr[$counter] * 0.5);
+      $counter++;
+    }
+  }
+  // Get Min/Max
+
+  $getMinMaxSQL = "SELECT min(min) as min, max(max) as max
+                    FROM feedback
+                    WHERE review_count = {$reviewCount}
+                    AND designation = '{$emp}'
+                    AND reviewer <> '{$emp}'
+                    GROUP BY competency";
+  $getMinMaxDAO = $conn->query($getMinMaxSQL);
+
+  $counter = 0;
+  if ($getMinMaxDAO->num_rows > 0) {
+    while($row = $getMinMaxDAO->fetch_assoc()) {
+      $graphMin[$counter] = $row['min'];
+      $graphMax[$counter] = $row['max'];
+      $counter++;
     }
   }
 
@@ -217,11 +318,13 @@
         name: "Highest",
         color: "#A0EC37",
         dataPoints: [
-        { y: 5, label: "PEOPLE DEVELOPER"},
-        { y: 4, label: "ENTREPRENEUR"},
-        { y: 5, label: "STRATEGIST"},        
-        { y: 5, label: "INTEGRATOR"},        
-        { y: 4, label: "INNOVATOR"}
+        
+
+        { y: <?php echo round($graphMax[0], 2) ?>, label: "PEOPLE DEVELOPER"},
+        { y: <?php echo round($graphMax[1], 2) ?>, label: "ENTREPRENEUR"},
+        { y: <?php echo round($graphMax[2], 2) ?>, label: "STRATEGIST"},        
+        { y: <?php echo round($graphMax[3], 2) ?>, label: "INTEGRATOR"},        
+        { y: <?php echo round($graphMax[4], 2) ?>, label: "INNOVATOR"}
 
 
         ]
@@ -232,11 +335,11 @@
         name: "Average",
         color: "#37B3EC",          
         dataPoints: [
-        { y: 3.5, label: "PEOPLE DEVELOPER"},
-        { y: 4, label: "ENTREPRENEUR"},
-        { y: 4.5, label: "STRATEGIST"},        
-        { y: 3, label: "INTEGRATOR"},        
-        { y: 2, label: "INNOVATOR"}
+        { y: <?php echo round($graphAvg[0], 2) ?>, label: "PEOPLE DEVELOPER"},
+        { y: <?php echo round($graphAvg[1], 2) ?>, label: "ENTREPRENEUR"},
+        { y: <?php echo round($graphAvg[2], 2) ?>, label: "STRATEGIST"},        
+        { y: <?php echo round($graphAvg[3], 2) ?>, label: "INTEGRATOR"},        
+        { y: <?php echo round($graphAvg[4], 2) ?>, label: "INNOVATOR"}
 
 
         ]
@@ -247,11 +350,11 @@
         name: "Lowest",
         color: "#EC5637",
         dataPoints: [
-        { y: 2, label: "PEOPLE DEVELOPER"},
-        { y: 3, label: "ENTREPRENEUR"},
-        { y: 2.5, label: "STRATEGIST"},        
-        { y: 1.5, label: "INTEGRATOR"},        
-        { y: 1, label: "INNOVATOR"}
+        { y: <?php echo round($graphMin[0], 2) ?>, label: "PEOPLE DEVELOPER"},
+        { y: <?php echo round($graphMin[1], 2) ?>, label: "ENTREPRENEUR"},
+        { y: <?php echo round($graphMin[2], 2) ?>, label: "STRATEGIST"},        
+        { y: <?php echo round($graphMin[3], 2) ?>, label: "INTEGRATOR"},        
+        { y: <?php echo round($graphMin[4], 2) ?>, label: "INNOVATOR"}
 
         ]
       }
@@ -298,22 +401,30 @@ chart.render();
             ?>
 
                 <?php
+                $selfSum = 0;
+                $teamSum = 0;
+                $managerSum = 0;
+
                 for ($c=1; $c <= 5 ; $c++) { 
                   echo '<tr class="clickable" data-toggle="collapse" id="row' . $c . '" data-target=".row' . $c . '">
                     <td><i class="glyphicon glyphicon-plus"></i></td>
                     <td>' . $competencyKeys[$c-1] . '</td>
-                    <td>' . $selfScore[$c-1]['cagg'] . '</td>
-                    <td>' . $teamScore[$c-1]['cagg'] . '</td>
-                    <td>' . $managerScore[$c-1]['cagg'] . '</td>
+                    <td>' . round($selfScore[$c-1]['cagg'], 2) . '</td>
+                    <td>' . round($teamScore[$c-1]['cagg'], 2) . '</td>
+                    <td>' . round($managerScore[$c-1]['cagg'], 2) . '</td>
                     </tr>';
+
+                    $selfSum = $selfSum + $selfScore[$c-1]['cagg'];
+                    $teamSum = $teamSum + $teamScore[$c-1]['cagg'];
+                    $managerSum = $managerSum + $managerScore[$c-1]['cagg'];
 
                   for ($section=1; $section <= 4 ; $section++) { 
                     echo '<tr class="collapse row' . $c . '">
                       <td><i class="glyphicon glyphicon-minus"></i></td>
                       <td>' . $competencyText[$competencyKeys[$c-1]][$section-1] . '</td>
-                      <td>' . $selfScore[$c-1]['s' . $section] . '</td>
-                      <td>' . $teamScore[$c-1]['s' . $section] . '</td>  
-                      <td>' . $managerScore[$c-1]['s' . $section] . '</td>
+                      <td>' . round($selfScore[$c-1]['s' . $section], 2) . '</td>
+                      <td>' . round($teamScore[$c-1]['s' . $section], 2) . '</td>  
+                      <td>' . round($managerScore[$c-1]['s' . $section], 2) . '</td>
                       </tr>';
                   }
 
@@ -337,15 +448,27 @@ chart.render();
         <tbody>
           <tr class="aggregate">
             <td>Self</td>
-            <td><?php echo round($finalSelfScores[5], 2); ?></td>
+            <?php
+              try {
+                $selfSum = round($selfSum / count($selfScore), 2);
+                $teamSum = round($teamSum / count($teamScore), 2);
+                $managerSum = round($managerSum / count($managerScore), 2);
+              } catch (Exception $e) {
+                $selfSum = 0;
+                $teamSum = 0;
+                $managerSum = 0;
+              }
+              
+            ?>
+            <td><?php echo $selfSum; ?></td>
           </tr>
           <tr class="aggregate">
             <td>Team</td>
-            <td><?php echo round($finalScores[5]); ?></td>
+            <td><?php echo $teamSum; ?></td>
           </tr>
           <tr class="aggregate">
             <td>Others</td>
-            <td><?php echo round($finalScores[5]); ?></td>
+            <td><?php echo $managerSum; ?></td>
           </tr>  
         </tbody>
       </table>

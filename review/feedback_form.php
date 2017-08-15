@@ -33,13 +33,13 @@
   $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
 
   // if the feedback is already done.
-/*  $repeatSQL = 'SELECT 1 FROM emp_feedback WHERE review_count = ' . $reviewCount . '
+  $repeatSQL = 'SELECT 1 FROM feedback WHERE review_count = ' . $reviewCount . '
                 AND designation = \'' . $_SESSION["feedbackFor"] . '\' 
                 AND reviewer = \'' . $user . '\'';
   if ($conn->query($repeatSQL)->num_rows > 0) {
     echo 'Feedback already submitted. Please go back and give feedback for another employee';
     exit();
-  }*/
+  }
 
   /*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $prefix = 'competency';
