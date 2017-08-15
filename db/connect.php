@@ -12,7 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 // echo "db Connected successfully";
-error_reporting(E_ALL ^ E_NOTICE);  
+error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);  
 
 function authCheck($user, $pass) {
 	$sql = 'SELECT password from emp_info where designation = \'' . $user . '\'';
@@ -35,5 +35,10 @@ function invalid() {
 	echo '<div class="alert alert-danger">
 		  <strong>Wrong!</strong> username or password.
 		</div>';
+}
+
+function securityPipe($input) {
+	$pattern = '/[^\da-z]+/i';
+	return preg_replace($pattern, ' ', $input);
 }
 ?>

@@ -9,8 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		return;
 	}
 
-	$user = $_POST['username'];
-	$pass = $_POST['password'];
+	$user = securityPipe($_POST['username']);
+	$pass = securityPipe($_POST['password']);
 
 	if (is_null($user) || is_null($pass)) {
 		invalid();

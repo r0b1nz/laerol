@@ -19,15 +19,19 @@
   // echo 'Level: ' . $level;
 
   $feedbackList = array();
-  $isUserManager = 'SELECT count(*) as c from emp_info where manager = \'' . $user . '\'';
-  $result = $conn->query($isUserManager);
-  if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    if ($row['c'] > 0) {
-      // User manages more than 0 employees, therefore user is a manager. 
-      array_push($feedbackList, $user);
+
+  if ($level > 1) {
+    $isUserManager = 'SELECT count(*) as c from emp_info where manager = \'' . $user . '\'';
+    $result = $conn->query($isUserManager);
+    if ($result->num_rows > 0) {
+      $row = $result->fetch_assoc();
+      if ($row['c'] > 0) {
+        // User manages more than 0 employees, therefore user is a manager. 
+        array_push($feedbackList, $user);
+      }
     }
   }
+
   
 
   // TODO: Add conditions for showing the feedback links
@@ -61,7 +65,7 @@
       }
     }
 
-    // Add Level 0
+/*    // Add Level 0
     $sql = getUsersSQL(0);
     $result = $conn->query($sql);
 
@@ -71,7 +75,7 @@
           array_push($feedbackList, $row['designation']);
         }
       }
-    }
+    }*/
 
 
     // Add level 2, if user manages the emp, and emp is a manager. 
