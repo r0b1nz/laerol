@@ -99,8 +99,10 @@
       $maxSection = -1;
       // loop sections
       for ($s=1; $s <= $sections ; $s++) { 
-        $min = 10000;
-        $max = -1;
+        // $min = 10000;
+        $min = $minSection;
+        // $max = -1;
+        $max = $maxSection;
         $totalScore = 0;
         $totalQuestions = 0;
 
