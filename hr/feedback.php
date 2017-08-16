@@ -1,4 +1,7 @@
 <?php
+/*
+  Feedback Viewer 
+*/
   session_start();
   require "../db/connect.php";
   
@@ -27,7 +30,7 @@
     $row = $result->fetch_assoc();
     $level = $row['level'];
   }
-  // echo $level;
+  echo $level;
 
   $selfSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
               avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
@@ -154,6 +157,27 @@
     $graphAvg = array();
     $counter = 0;
     for ($c=0; $c < 5; $c++) { 
+      if ($team[$counter] == 0 || $mgr[$counter] == 0 || $peer[$counter] == 0) {
+        $err = 'None of the ';
+        if ($team[$counter] == 0)
+          $err = $err . '(team member) ';
+        if ($mgr[$counter] == 0)
+          $err = $err . '(manager) ';
+        if ($peer[$counter] == 0)
+          $err = $err . '(peer) ';
+
+        $err = $err . 'has submitted the feedback for ' . $emp;
+
+        echo '<script type="text/javascript">
+          alertFunc();
+          function alertFunc()
+          {
+            alert("' . $err . '");
+            location.href = "../hr/view_feedback.php"
+          }
+          </script>';
+      }
+
       $graphAvg[$counter] = ($team[$counter] * 0.5) + ($peer[$counter] * 0.3) + ($mgr[$counter] * 0.2);
       // echo "{$counter}->{$team[$counter]} * 0.5 + {$peer[$counter]} * 0.3 + {$mgr[$counter]} * 0.2 <br>";
       $counter++;
@@ -175,10 +199,36 @@
 
     $graphAvg = array();
     $counter = 0;
-    foreach ($team as $key => $value) {
+
+    for ($c=0; $c < 5; $c++) { 
+
+      if ($team[$counter] == 0 || $mgr[$counter] == 0) {
+        $err = 'None of the ';
+        if ($team[$counter] == 0)
+          $err = $err . '(team member) ';
+        if ($mgr[$counter] == 0)
+          $err = $err . '(manager) ';
+        $err = $err . 'has submitted the feedback for ' . $emp;
+
+        echo '<script type="text/javascript">
+          alertFunc();
+          function alertFunc()
+          {
+            alert("' . $err . '");
+            location.href = "../hr/view_feedback.php"
+          }
+          </script>';
+          exit();
+      }
+      
       $graphAvg[$counter] = ($team[$counter] * 0.5) + ($mgr[$counter] * 0.5);
       $counter++;
     }
+
+/*    foreach ($team as $key => $value) {
+      $graphAvg[$counter] = ($team[$counter] * 0.5) + ($mgr[$counter] * 0.5);
+      $counter++;
+    }*/
   }
   // Get Min/Max
 
