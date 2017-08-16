@@ -27,7 +27,7 @@
     $row = $result->fetch_assoc();
     $level = $row['level'];
   }
-  echo $level;
+  // echo $level;
 
   $selfSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
               avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
@@ -68,7 +68,7 @@
               FROM feedback 
               WHERE review_count = {$reviewCount}
               AND designation = '{$emp}'
-              AND reviewer in (SELECT designation FROM emp_info WHERE level = 1
+              AND reviewer in (SELECT designation FROM emp_info WHERE level = 1 and designation <> '{$emp}'
                                UNION SELECT manager FROM emp_info WHERE designation = '{$emp}') 
               GROUP BY competency";
 
@@ -153,12 +153,12 @@
 
     $graphAvg = array();
     $counter = 0;
-    foreach ($team as $key => $value) {
+    for ($c=0; $c < 5; $c++) { 
       $graphAvg[$counter] = ($team[$counter] * 0.5) + ($peer[$counter] * 0.3) + ($mgr[$counter] * 0.2);
+      // echo "{$counter}->{$team[$counter]} * 0.5 + {$peer[$counter]} * 0.3 + {$mgr[$counter]} * 0.2 <br>";
       $counter++;
     }
-
-    // $graphAvg = ($team * 0.5) + ($peer * 0.3) + ($mgr * 0.2);
+    
   } else {
     $team = array();
     $mgr = array();
