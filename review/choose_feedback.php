@@ -80,7 +80,7 @@
 
     // Add level 2, if user manages the emp, and emp is a manager. 
     // SELECT a.designation FROM emp_info a, emp_info b WHERE a.level = 2 AND a.manager = 'BIO' and b.manager = a.designation
-    $sql = 'SELECT a.designation as designation 
+    $sql = 'SELECT DISTINCT a.designation as designation 
             FROM emp_info a, emp_info b 
             WHERE a.level = 2 AND a.manager = \'' . $user . '\' and b.manager = a.designation';
     $result = $conn->query($sql);
@@ -94,7 +94,7 @@
 
   // For Further levels, just take the feedback for the MANAGER
   if ($level > 1) {
-    $sql = 'SELECT manager from emp_info where designation = \'' . $user . '\'';
+    $sql = 'SELECT DISTINCT manager from emp_info where designation = \'' . $user . '\'';
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -106,7 +106,7 @@
 
 
   function getUsersSQL($lvl) {
-    return 'SELECT designation from emp_info where level = ' . $lvl;;
+    return 'SELECT DISTINCT designation from emp_info where level = ' . $lvl;;
   }
 ?>
 
