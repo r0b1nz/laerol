@@ -373,7 +373,6 @@
           <label class="radio-inline"><input type="radio" name="competency2_s2_q3" value="4">4</label>
           <label class="radio-inline"><input type="radio" name="competency2_s2_q3" value="5">5</label>
         </div>
-      </div>
         
       <h4 align="center">Gives space for initiatives and enables teams to take risks</h4>
         <div class="form-group">
@@ -419,6 +418,7 @@ and capabilities</label><br>
           <label class="radio-inline"><input type="radio" name="competency2_s4_q2" value="4">4</label>
           <label class="radio-inline"><input type="radio" name="competency2_s4_q2" value="5">5</label>
         </div>
+      </div>
 
       <h3 align="center">STRATEGIST - "SHAPE THE FUTURE AND MAKE THE WAY"</h3>
       <div class="questions">

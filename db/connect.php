@@ -38,7 +38,7 @@ function invalid() {
 }
 
 function securityPipe($input) {
-	$pattern = '/[^\da-z]+/i';
+	$pattern = '/[^\da-z_]+/i';
 	return preg_replace($pattern, ' ', $input);
 }
 ?>

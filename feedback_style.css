@@ -1,0 +1,65 @@
+header {
+	padding: 5px;
+	padding-bottom: 0;
+	text-align: center;
+}
+
+header{
+	margin: 30px;
+}
+
+body{
+	background-color: black;
+	padding-top: 2%;
+	padding-left: 5%;
+	padding-right: 5%;
+	padding-bottom: 2%;
+}
+
+.container{
+    margin: 0 auto;
+}
+
+.feedback_center_div{
+	background-color: #110797;
+	color: white; 
+	padding: 1%;
+}
+
+.form_div{
+	background-color: white;
+	padding-bottom: 2%;
+}
+
+header h1{
+	color:white;
+	font-weight:bold;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+header h4{
+	color:white;
+	font-weight:bold;
+	margin-top: 0px;
+	margin-bottom: 20px;
+}
+
+thead th h4{
+	font-weight: bold;
+	color: #73344d;
+}
+
+tbody .clickable td{
+	font-weight: bold;
+	color: #ed6c9e;
+}
+
+tbody .collapse td{
+	color: #632d42;	
+}
+
+tbody .aggregate td{
+	font-weight: bold;
+	color: #ed6c9e;	
+}
