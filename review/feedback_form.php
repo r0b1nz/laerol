@@ -180,7 +180,7 @@
   </header>
   <div class="container">
   <h1 align="center" class="feedback_center_div">Feedback Form</h1>
-    <form method="POST" class="form_div">
+    <form method="POST" class="form_div" id="feedbackform">
       <h3 align="center">PEOPLE DEVELOPER - "Grow people to grow the business"</h3>
       <div class="questions">
       <h4 align="center">Treats all individuals in a respectful and consistent manner</h4>
@@ -755,6 +755,24 @@ the how and why of events</label><br>
           <label class="radio-inline"><input type="radio" name="competency5_s4_q3" value="3">3</label>
           <label class="radio-inline"><input type="radio" name="competency5_s4_q3" value="4">4</label>
           <label class="radio-inline"><input type="radio" name="competency5_s4_q3" value="5">5</label>
+        </div>
+      </div>
+
+      <h3 align="center">Optional Feedback</h3>
+      <div class="questions">
+      <h4 align="center">Question 1</h4>
+        <div class="form-group">
+          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+        </div>
+      
+        <h4 align="center">Question 2</h4>
+        <div class="form-group">
+          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+        </div>
+        
+        <h4 align="center">Question 3</h4>
+        <div class="form-group">
+          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
         </div>
       </div>
 

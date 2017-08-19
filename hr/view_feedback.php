@@ -30,7 +30,15 @@
 <body>
   <header>
     <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
-    <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
+    <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a><br><br>
+    <form action="../hr/view_feedback.php">
+    <p style="color: white">Review Cycle Number</p>
+    <select name="ReviewCycleNumber">
+      <option value="1">1</option>
+      <option value="2">2</option>
+    </select>&nbsp;&nbsp;&nbsp;
+    <input class="btn btn-sm" type="submit">
+  </form>
   </header>
     
   <div class="container center_div">
