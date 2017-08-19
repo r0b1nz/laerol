@@ -31,14 +31,6 @@
   <header>
     <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a><br><br>
-    <form action="../hr/view_feedback.php">
-    <p style="color: white">Review Cycle Number</p>
-    <select name="ReviewCycleNumber">
-      <option value="1">1</option>
-      <option value="2">2</option>
-    </select>&nbsp;&nbsp;&nbsp;
-    <input class="btn btn-sm" type="submit">
-  </form>
   </header>
     
   <div class="container center_div">
@@ -47,34 +39,15 @@
         <tr>
           <th>#</th>
           <th class="do_center">Designation</th>
-          <th class="do_center">Click to View Feedback</th>
-          <th class="do_center">Click to Feedback Details</th>
+          <th class="do_center">Submitted</th>
         </tr>
       </thead>
       <tbody>
-   TEMPLATE for reference. 
-TODO: Add hyperlink to the button
-        <tr>
-          <th scope="row">1</th>
-          <td class="do_center">Plant Director</td>
-          <td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>
-          <td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>
-        </tr>
-
-<!--         <?php
-          if ($result->num_rows > 0) {
-            $managerCounter = 1;
-            while ($manager = $result->fetch_assoc()) {
-              echo '<tr>';
-              echo '<th scope="row">' . $managerCounter . '</th>';
-              echo '<td class="do_center">' . $manager['designation'] . '</td>';
-              echo '<td class="do_center"><a href="feedback.php?for=' . $manager['designation'] . '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></a></td>';
-              echo '</tr>';
-              $managerCounter++;
-            }
-          }
-        ?> -->
-
+      <tr>
+        <td>1</td>
+        <td class="do_center">HOD_HR</td>
+        <td class="do_center">Yes</td>
+      </tr>
 
       </tbody>
     </table>
