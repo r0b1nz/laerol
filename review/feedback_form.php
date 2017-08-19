@@ -56,12 +56,25 @@
             // Enter value to db
             $insertAnswer = "INSERT INTO feedbacks VALUES ({$reviewCount}, '{$feedbackFor}', '{$user}',
                                                             {$c}, {$s}, {$q}, {$answer})";
-            echo $insertAnswer . '<br>';
+            // echo $insertAnswer . '<br>';
             $conn->query($insertAnswer);
           }
         }
       }
     }
+
+    $comment1 = $_POST['comment1'];
+    $comment2 = $_POST['comment2'];
+    $comment3 = $_POST['comment3'];
+
+    if (!(empty($comment1) && empty($comment2) && empty($comment3))) {
+        $sql = "INSERT INTO feedbacks_subjective VALUES ({$reviewCount}, '{$feedbackFor}', '{$user}', 
+                                                            '{$comment1}', '{$comment2}', '{$comment3}')";
+        $conn->query($sql);
+      }
+
+
+
     
     echo '<script type="text/javascript">
     alertFunc();
@@ -680,17 +693,17 @@ the how and why of events</label><br>
       <div class="questions">
       <h4 align="center">Question 1</h4>
         <div class="form-group">
-          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+          <textarea rows="5" cols="150" name="comment1" class="form-group" form="feedbackform"></textarea>
         </div>
       
         <h4 align="center">Question 2</h4>
         <div class="form-group">
-          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+          <textarea rows="5" cols="150" name="comment2" class="form-group" form="feedbackform"></textarea>
         </div>
         
         <h4 align="center">Question 3</h4>
         <div class="form-group">
-          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+          <textarea rows="5" cols="150" name="comment3" class="form-group" form="feedbackform"></textarea>
         </div>
       </div>
 
