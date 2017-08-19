@@ -1,314 +1,3 @@
-<?php
-/*
-  Feedback Viewer 
-*/
-  session_start();
-  require "../db/connect.php";
-  
-  if (!authCheck($_SESSION['user'], $_SESSION['pass']) || !isset($_SESSION['isHR'])) {
-    header('Location: ../');
-    exit();
-  }
-
-  if (is_null($_GET['for']) || empty($_GET['for'])) {
-    header('Location: ../hr');
-  }
-
-  $emp = securityPipe($_GET['for']);
-
-  // Get the ReviewCount
-  // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
-  $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
-  $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
-  
-  // Get emp level
-  $level = 2;
-  $levelSQL = "SELECT level FROM emp_info WHERE designation = '{$emp}'";
-  $result = $conn->query($levelSQL);
-
-  if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $level = $row['level'];
-  }
-  echo $level;
-
-  $selfSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
-              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
-              FROM feedback 
-              WHERE review_count = {$reviewCount}
-              AND designation = '{$emp}'
-              AND reviewer = '{$emp}'
-              GROUP BY competency";
-
-  $teamSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
-              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
-              FROM feedback 
-              WHERE review_count = {$reviewCount}
-              AND designation = '{$emp}'
-              AND reviewer in (SELECT designation FROM emp_info WHERE manager = '{$emp}')
-              GROUP BY competency";
-
-  $managerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
-              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
-              FROM feedback 
-              WHERE review_count = {$reviewCount}
-              AND designation = '{$emp}'
-              AND reviewer in (SELECT manager FROM emp_info WHERE designation = '{$emp}')
-              GROUP BY competency";
-
-  if ($level == 1) {
-    $peerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
-              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
-              FROM feedback 
-              WHERE review_count = {$reviewCount}
-              AND designation = '{$emp}'
-              AND reviewer in (SELECT designation FROM emp_info WHERE level = $level AND designation <> '{$emp}')
-              GROUP BY competency";  
-
-  // managerSQL => Manager + Peers (Level 0)
-  $managerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
-              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
-              FROM feedback 
-              WHERE review_count = {$reviewCount}
-              AND designation = '{$emp}'
-              AND reviewer in (SELECT designation FROM emp_info WHERE level = 1 and designation <> '{$emp}'
-                               UNION SELECT manager FROM emp_info WHERE designation = '{$emp}') 
-              GROUP BY competency";
-
-  $onlyManagerSQL = "SELECT competency, avg(section1) as s1, avg(section2) as s2, avg(section3) as s3, 
-              avg(section4) as s4, avg(competency_agg) as cagg, min(min) as smin, max(max) as smax 
-              FROM feedback 
-              WHERE review_count = {$reviewCount}
-              AND designation = '{$emp}'
-              AND reviewer in (SELECT manager FROM emp_info WHERE designation = '{$emp}')
-              GROUP BY competency";
-
-    $peerScoreDAO = $conn->query($peerSQL);
-    $peerScore = array();
-    if ($peerScoreDAO->num_rows > 0) {
-      while ($row = $peerScoreDAO->fetch_assoc()) {
-        array_push($peerScore, $row);
-      }
-    }
-
-  }
-
-
-  $selfScoresDAO = $conn->query($selfSQL);
-  $teamScoresDAO = $conn->query($teamSQL);
-  $managerScoreDAO = $conn->query($managerSQL);
-
-  $selfScore = array();
-  $teamScore = array();
-  $managerScore = array();
-
-  if ($selfScoresDAO->num_rows > 0) {
-    while ($row = $selfScoresDAO->fetch_assoc()) {
-      array_push($selfScore, $row);
-    }
-  }
-
-  if ($teamScoresDAO->num_rows > 0) {
-    while ($row = $teamScoresDAO->fetch_assoc()) {
-      array_push($teamScore, $row);
-    }
-  }
-
-  if ($managerScoreDAO->num_rows > 0) {
-    while ($row = $managerScoreDAO->fetch_assoc()) {
-      array_push($managerScore, $row);
-    }
-  }
-
-  //Average score: 50% Team + 30% Peer/Mgr + 20% Mgr
-  $graphAvg = array();
-  $graphMin = array();
-  $graphMax = array();
-
-
-  if ($level == 1) {
-    $team = array();
-    $peer = array();
-    $mgr = array();
-    $onlyManagerScore = array();
-
-    $counter = 0;
-    foreach ($teamScore as $key => $value) {
-      $team[$counter++] = $value['cagg'];
-    }
-
-    $counter = 0;
-    foreach ($peerScore as $key => $value) {
-      $peer[$counter++] = $value['cagg'];
-    }
-
-    $onlyManagerDAO = $conn->query($onlyManagerSQL);
-    if ($onlyManagerDAO->num_rows > 0) {
-      while ($row = $onlyManagerDAO->fetch_assoc()) {
-        array_push($onlyManagerScore, $row);
-      }
-    }
-
-    $counter = 0;
-    foreach ($onlyManagerScore as $key => $value) {
-      $mgr[$counter++] = $value['cagg'];
-    }
-
-    $graphAvg = array();
-    $counter = 0;
-    for ($c=0; $c < 5; $c++) { 
-      if ($team[$counter] == 0 || $mgr[$counter] == 0 || $peer[$counter] == 0) {
-        $err = 'None of the ';
-        if ($team[$counter] == 0)
-          $err = $err . '(team member) ';
-        if ($mgr[$counter] == 0)
-          $err = $err . '(manager) ';
-        if ($peer[$counter] == 0)
-          $err = $err . '(peer) ';
-
-        $err = $err . 'has submitted the feedback for ' . $emp;
-
-        echo '<script type="text/javascript">
-          alertFunc();
-          function alertFunc()
-          {
-            alert("' . $err . '");
-            location.href = "../hr/view_feedback.php"
-          }
-          </script>';
-      }
-
-      $graphAvg[$counter] = ($team[$counter] * 0.5) + ($peer[$counter] * 0.3) + ($mgr[$counter] * 0.2);
-      // echo "{$counter}->{$team[$counter]} * 0.5 + {$peer[$counter]} * 0.3 + {$mgr[$counter]} * 0.2 <br>";
-      $counter++;
-    }
-    
-  } else {
-    $team = array();
-    $mgr = array();
-
-    $counter = 0;
-    foreach ($teamScore as $key => $value) {
-      $team[$counter++] = $value['cagg'];
-    }
-
-    $counter = 0;
-    foreach ($managerScore as $key => $value) {
-      $mgr[$counter++] = $value['cagg'];
-    }
-
-    $graphAvg = array();
-    $counter = 0;
-
-    for ($c=0; $c < 5; $c++) { 
-
-      if ($team[$counter] == 0 || $mgr[$counter] == 0) {
-        $err = 'None of the ';
-        if ($team[$counter] == 0)
-          $err = $err . '(team member) ';
-        if ($mgr[$counter] == 0)
-          $err = $err . '(manager) ';
-        $err = $err . 'has submitted the feedback for ' . $emp;
-
-        echo '<script type="text/javascript">
-          alertFunc();
-          function alertFunc()
-          {
-            alert("' . $err . '");
-            location.href = "../hr/view_feedback.php"
-          }
-          </script>';
-          exit();
-      }
-      
-      $graphAvg[$counter] = ($team[$counter] * 0.5) + ($mgr[$counter] * 0.5);
-      $counter++;
-    }
-
-/*    foreach ($team as $key => $value) {
-      $graphAvg[$counter] = ($team[$counter] * 0.5) + ($mgr[$counter] * 0.5);
-      $counter++;
-    }*/
-  }
-  // Get Min/Max
-
-  $getMinMaxSQL = "SELECT min(min) as min, max(max) as max
-                    FROM feedback
-                    WHERE review_count = {$reviewCount}
-                    AND designation = '{$emp}'
-                    AND reviewer <> '{$emp}'
-                    GROUP BY competency";
-  $getMinMaxDAO = $conn->query($getMinMaxSQL);
-
-  $counter = 0;
-  if ($getMinMaxDAO->num_rows > 0) {
-    while($row = $getMinMaxDAO->fetch_assoc()) {
-      $graphMin[$counter] = $row['min'];
-      $graphMax[$counter] = $row['max'];
-      $counter++;
-    }
-  }
-
-
-  if (false) {
-    $withoutSelf = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
-                    avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
-                    FROM emp_feedback 
-                    WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount;
-
-                    
-    $team = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
-                    avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
-                    FROM emp_feedback 
-                    WHERE designation = \'' . $emp . '\' and reviewer <> \'' . $emp . '\' and review_count = ' . $reviewCount . '
-                    and reviewer in (SELECT designation FROM emp_info WHERE manager = \''. $emp . '\')';
-
-                    
-    $manager = 'SELECT avg(competency1) as c1, avg(competency2) as c2, avg(competency3) as c3, 
-                    avg(competency4) as c4, avg(competency5) as c5, avg(competency_agg) as cavg
-                    FROM emp_feedback 
-                    WHERE designation = \'' . $emp . '\' and reviewer in (SELECT manager FROM emp_info WHERE designation = \'' . $emp . '\' ) and review_count = ' . $reviewCount;
-
-    // if level == 1, add peers too in the $manager sql
-
-
-    $selfScores = 'SELECT sum(competency1) as c1, sum(competency2) as c2, sum(competency3) as c3, 
-                    sum(competency4) as c4, sum(competency5) as c5, sum(competency_agg) as cavg
-                    FROM emp_feedback 
-                    WHERE designation = \'' . $emp . '\' and reviewer = \'' . $emp . '\' and review_count = ' . $reviewCount;
-
-    $scoresByOthers = $conn->query($withoutSelf);
-    $scoresBySelf = $conn->query($selfScores);
-
-    $scoresByTeam = $conn->query($team);
-    $scoresByManager = $conn->query($manager);
-    echo $manager;
-
-    $finalScores = array();
-    $finalSelfScores = array();
-
-    if ($scoresByOthers->num_rows > 0) {
-      $score = $scoresByOthers->fetch_assoc();
-      array_push($finalScores, $score['c1']);
-      array_push($finalScores, $score['c2']);
-      array_push($finalScores, $score['c3']);
-      array_push($finalScores, $score['c4']);
-      array_push($finalScores, $score['c5']);
-      array_push($finalScores, $score['cavg']);
-    }
-
-    if ($scoresBySelf->num_rows > 0) {
-      $score = $scoresBySelf->fetch_assoc();
-      array_push($finalSelfScores, $score['c1']);
-      array_push($finalSelfScores, $score['c2']);
-      array_push($finalSelfScores, $score['c3']);
-      array_push($finalSelfScores, $score['c4']);
-      array_push($finalSelfScores, $score['c5']);
-      array_push($finalSelfScores, $score['cavg']);
-    }}
-
-?>
-<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -370,11 +59,11 @@
         dataPoints: [
         
 
-        { y: <?php echo round($graphMax[0], 2) ?>, label: "PEOPLE DEVELOPER"},
-        { y: <?php echo round($graphMax[1], 2) ?>, label: "ENTREPRENEUR"},
-        { y: <?php echo round($graphMax[2], 2) ?>, label: "STRATEGIST"},        
-        { y: <?php echo round($graphMax[3], 2) ?>, label: "INTEGRATOR"},        
-        { y: <?php echo round($graphMax[4], 2) ?>, label: "INNOVATOR"}
+        { y: 5, label: "PEOPLE DEVELOPER"},
+        { y: 5, label: "ENTREPRENEUR"},
+        { y: 5, label: "STRATEGIST"},        
+        { y: 5, label: "INTEGRATOR"},        
+        { y: 5, label: "INNOVATOR"}
 
 
         ]
@@ -385,11 +74,11 @@
         name: "Average",
         color: "#37B3EC",          
         dataPoints: [
-        { y: <?php echo round($graphAvg[0], 2) ?>, label: "PEOPLE DEVELOPER"},
-        { y: <?php echo round($graphAvg[1], 2) ?>, label: "ENTREPRENEUR"},
-        { y: <?php echo round($graphAvg[2], 2) ?>, label: "STRATEGIST"},        
-        { y: <?php echo round($graphAvg[3], 2) ?>, label: "INTEGRATOR"},        
-        { y: <?php echo round($graphAvg[4], 2) ?>, label: "INNOVATOR"}
+        { y: 3.87, label: "PEOPLE DEVELOPER"},
+        { y: 4.36, label: "ENTREPRENEUR"},
+        { y: 4.15, label: "STRATEGIST"},        
+        { y: 4.23, label: "INTEGRATOR"},        
+        { y: 4.22, label: "INNOVATOR"}
 
 
         ]
@@ -400,11 +89,11 @@
         name: "Lowest",
         color: "#EC5637",
         dataPoints: [
-        { y: <?php echo round($graphMin[0], 2) ?>, label: "PEOPLE DEVELOPER"},
-        { y: <?php echo round($graphMin[1], 2) ?>, label: "ENTREPRENEUR"},
-        { y: <?php echo round($graphMin[2], 2) ?>, label: "STRATEGIST"},        
-        { y: <?php echo round($graphMin[3], 2) ?>, label: "INTEGRATOR"},        
-        { y: <?php echo round($graphMin[4], 2) ?>, label: "INNOVATOR"}
+        { y: 1, label: "PEOPLE DEVELOPER"},
+        { y: 2, label: "ENTREPRENEUR"},
+        { y: 2, label: "STRATEGIST"},        
+        { y: 2, label: "INTEGRATOR"},        
+        { y: 3, label: "INNOVATOR"}
 
         ]
       }
@@ -418,7 +107,7 @@ chart.render();
 </head>
 <body>
   <header>
-    <h1>L'ORÉAL: <?php echo $emp; ?></h1>
+    <h1>L'ORÉAL: HOD_Finance</h1>
     <h4>India</h4>
     <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
     <a href="../hr/view_feedback.php"><button class="btn btn-sm">Back</button></a>
@@ -427,61 +116,649 @@ chart.render();
   <div class="row jumbotron" style="background-color: white;">
     <div class="col-lg-12">
       <div class="container">
+      <button class="btn btn-sm" data-toggle="collapse" data-target=".collapse">Expand/Collapse</button>
         <table class="table table-responsive table-hover">
           <thead>
                 <tr><th></th><th><h4>Competency</h4></th><th><h4>Self</h4></th><th><h4>Team</h4></th><th><h4>Others</h4></th></tr>
             </thead>
             <tbody>
 
-            <?php
-              $competencyKeys = array('PEOPLE DEVELOPER',
-               'ENTREPRENEUR', 
-               'STRATEGIST', 
-               'INTEGRATOR', 
-               'INNOVATOR'
-               );
+            
+                  <tr class="clickable" data-toggle="collapse" id="row1" data-target=".row1">
+                  <td><i class="glyphicon glyphicon-plus"></i></td>
+                  <td>PEOPLE DEVELOPER</td>
+                  <td>0</td>
+                  <td>3.54</td>
+                  <td>4.25</td>
+                  </tr>
 
-              $competencyText = array('PEOPLE DEVELOPER' => ['Treats all individuals in a respectful and consistent manner', 'Leverages diversity',' Stimulates learning',' Empowers and develops individuals to contribute their best'],
-               'ENTREPRENEUR' => ['Takes accountability with courage', 'Builds and manages a customer centric organization', 'Gives space for initiatives and enables teams to take risks', 'Delivers with integrity both sustainable and short term results'], 
-               'STRATEGIST' => ['Builds an inspiring and shared vision', 'Creates strategic scenarios for growth', 'Leads transformation by aligning organization and human capabilities', 'Demonstrates sound judgment in decision making'], 
-               'INTEGRATOR' => ['Fosters a climate of trust and constructive confrontation', 'Develops collective performance of the team', 'Enhances transversal cooperation', 'Mobilizes stakeholders through active networking'], 
-               'INNOVATOR' => ['Puts the consumer as the central focus', 'Challenges the status quo and strives for excellence', 'Innovates beyond the product', 'Seizes what is just starting and opens new ventures']
-               );
+                      <tr class="clickable collapse row1" data-toggle="collapse" id="row11" data-target=".row11">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Treats all individuals in a respectful and consistent manner</td>
+                      <td>0</td>
+                      <td>2.6</td>  
+                      <td>3.9</td>
+                      </tr>
 
-            ?>
+                        <tr class="collapse row11">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Sets an example in terms of personal integrity</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row11">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Promotes a climate of mutual respect and transparency across all levels</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row11">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Listens and balances directness with empathy</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr><tr class="collapse row11">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Delivers with integrity both sustainable and short term results</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row11">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Adjusts priorities to take into account the work load of his/her team</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr>
 
-                <?php
-                $selfSum = 0;
-                $teamSum = 0;
-                $managerSum = 0;
+                      <tr class="clickable collapse row1" data-toggle="collapse" id="row12" data-target=".row12">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Leverages diversity</td>
+                      <td>0</td>
+                      <td>3.25</td>  
+                      <td>4</td>
+                      </tr>
+                      
+                        <tr class="collapse row12">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Seeks to understand others' motives, ambitions and emotions</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row12">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Encourages the team to work with diverse personalities, functions and cultures</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr>
 
-                for ($c=1; $c <= 5 ; $c++) { 
-                  echo '<tr class="clickable" data-toggle="collapse" id="row' . $c . '" data-target=".row' . $c . '">
+                      <tr class="clickable collapse row1" data-toggle="collapse" id="row13" data-target=".row13">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td> Stimulates learning</td>
+                      <td>0</td>
+                      <td>4</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row13">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Analyzes personal mistakes and failures and learns from them</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row13">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Creates the work environment to stimulate learning and creativity</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row13">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Acquires and transmits beauty expertise gained through accumulated experience</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+                      
+                      <tr class="clickable collapse row1" data-toggle="collapse" id="row14" data-target=".row14">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td> Empowers and develops individuals to contribute their best</td>
+                      <td>0</td>
+                      <td>4.3</td>  
+                      <td>4.6</td>
+                      </tr>
+                
+                        <tr class="collapse row14">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Clarifies performance expectations</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row14">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Clarifies development priorities</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row14">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Shows trust and confidence in people’s ability to succeed</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr><tr class="collapse row14">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Uses a fact-based approach to appraise and gives feedback</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row14">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Spots talent accurately and mentors them for the Group</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                <tr class="clickable" data-toggle="collapse" id="row2" data-target=".row2">
                     <td><i class="glyphicon glyphicon-plus"></i></td>
-                    <td>' . $competencyKeys[$c-1] . '</td>
-                    <td>' . round($selfScore[$c-1]['cagg'], 2) . '</td>
-                    <td>' . round($teamScore[$c-1]['cagg'], 2) . '</td>
-                    <td>' . round($managerScore[$c-1]['cagg'], 2) . '</td>
-                    </tr>';
+                    <td>ENTREPRENEUR</td>
+                    <td>0</td>
+                    <td>4.18</td>
+                    <td>4.55</td>
+                    </tr>
 
-                    $selfSum = $selfSum + $selfScore[$c-1]['cagg'];
-                    $teamSum = $teamSum + $teamScore[$c-1]['cagg'];
-                    $managerSum = $managerSum + $managerScore[$c-1]['cagg'];
+                    <tr class="clickable collapse row2" data-toggle="collapse" id="row21" data-target=".row21">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Takes accountability with courage</td>
+                      <td>0</td>
+                      <td>3.88</td>  
+                      <td>4.5</td>
+                      </tr>
 
-                  for ($section=1; $section <= 4 ; $section++) { 
-                    echo '<tr class="collapse row' . $c . '">
-                      <td><i class="glyphicon glyphicon-minus"></i></td>
-                      <td>' . $competencyText[$competencyKeys[$c-1]][$section-1] . '</td>
-                      <td>' . round($selfScore[$c-1]['s' . $section], 2) . '</td>
-                      <td>' . round($teamScore[$c-1]['s' . $section], 2) . '</td>  
-                      <td>' . round($managerScore[$c-1]['s' . $section], 2) . '</td>
-                      </tr>';
-                  }
+                        <tr class="collapse row21">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Stands by own decisions and takes responsibility for them</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row21">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Takes responsibility for setbacks and wins</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row21">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Defends ideas with courage and tenacity especially with peers and superiors</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr><tr class="collapse row21">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Demonstrates in his decision-making adherence to the ethical charter and internal control norms</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr>
 
-                }
+                      <tr class="clickable collapse row2" data-toggle="collapse" id="row22" data-target=".row22">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Builds and manages a customer centric organization</td>
+                      <td>0</td>
+                      <td>3.84</td>  
+                      <td>4.5</td>
+                      </tr>
 
-                ?>
-            </tbody>
+                        <tr class="collapse row22">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Acts as a role model in connecting with consumers / customers through regular field or online visits</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row22">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Develops win/win partnerships with his/her business partners</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row22">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Builds an agile organization to fulfill customer needs</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                      <tr class="clickable collapse row2" data-toggle="collapse" id="row23" data-target=".row23">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Gives space for initiatives and enables teams to take risks</td>
+                      <td>0</td>
+                      <td>4.5</td>  
+                      <td>4.67</td>
+                      </tr>
+
+                        <tr class="collapse row23">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Allows and encourages testing and learning experiences</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row23">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Allows people to take bets and encourages bold approaches</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row23">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Recognizes the right to make mistakes</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                      <tr class="clickable collapse row2" data-toggle="collapse" id="row24" data-target=".row24">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Delivers with integrity both sustainable and short term results</td>
+                      <td>0</td>
+                      <td>4.5</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row24">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Delivers short term results without jeopardizing long term priorities</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row24">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Achieves sustainable results by building robust business processes
+and capabilities
+</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                    <tr class="clickable" data-toggle="collapse" id="row3" data-target=".row3">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>STRATEGIST</td>
+                    <td>0</td>
+                    <td>3.84</td>
+                    <td>4.46</td>
+                    </tr>
+
+                      <tr class="clickable collapse row3" data-toggle="collapse" id="row31" data-target=".row31">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Builds an inspiring and shared vision</td>
+                      <td>0</td>
+                      <td>4.33</td>  
+                      <td>4.33</td>
+                      </tr>
+
+                        <tr class="collapse row31">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Inspires others through his/her clear vision of the future</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row31">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Builds a shared vision co-owned by the team</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row31">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Maintains a constant focus on priorities</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                      <tr class="clickable collapse row3" data-toggle="collapse" id="row32" data-target=".row32">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Creates strategic scenarios for growth</td>
+                      <td>0</td>
+                      <td>3.5</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row32">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Analyzes the environment from various perspectives and looks for
+the how and why of events
+</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row32">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Explores different business opportunities and strategizes growth </td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row32">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Thinks big</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr><tr class="collapse row32">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Thinks ahead</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                      <tr class="clickable collapse row3" data-toggle="collapse" id="row33" data-target=".row33">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Leads transformation by aligning organization and human capabilities</td>
+                      <td>0</td>
+                      <td>3.75</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row33">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Designs a transformation strategy and translates it into a concrete action plan</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row33">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Drives transformation initiatives and mobilizes stakeholders</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row33">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Supports teams to achieve sustainable transformation</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr><tr class="collapse row33">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Demonstrates resilience and bounces back after difficult situations</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                      <tr class="clickable collapse row3" data-toggle="collapse" id="row34" data-target=".row34">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Demonstrates sound judgment in decision making</td>
+                      <td>0</td>
+                      <td>3.75</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row34">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Addresses situations in a holistic perspective</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row34">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Combines experience, intuition and fact-based reasoning</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row34">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Reads new and complex situations quickly and decides accordingly</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr><tr class="collapse row34">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Presents a complex situation in a simple manner</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                    <tr class="clickable" data-toggle="collapse" id="row4" data-target=".row4">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>INTEGRATOR</td>
+                    <td>0</td>
+                    <td>3.9</td>
+                    <td>4.58</td>
+                    </tr>
+
+                      <tr class="clickable collapse row4" data-toggle="collapse" id="row41" data-target=".row41">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Fosters a climate of trust and constructive confrontation</td>
+                      <td>0</td>
+                      <td>4.17</td>  
+                      <td>4.67</td>
+                      </tr>
+
+                        <tr class="collapse row41">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Allows people to express their point of view</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row41">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Stimulates dialogue between functions</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row41">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Focuses on ideas, facts and does not make it personal</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                      <tr class="clickable collapse row4" data-toggle="collapse" id="row42" data-target=".row42">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Develops collective performance of the team</td>
+                      <td>0</td>
+                      <td>3.5</td>  
+                      <td>4.63</td>
+                      </tr>
+
+                        <tr class="collapse row42">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Empowers team members with clear delegation</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row42">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Ensures team members work together as a team in a supportive climate</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row42">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Celebrates success and gives energy and enthusiasm to the team</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr><tr class="collapse row42">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Shares experience, information and best practices with generosity</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                      <tr class="clickable collapse row4" data-toggle="collapse" id="row43" data-target=".row43">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Enhances transversal cooperation</td>
+                      <td>0</td>
+                      <td>3.67</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row43">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Designs working methods and performance criteria that foster cooperation</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row43">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Designs working methods and performance criteria that foster cooperation</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row43">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Recognizes and rewards collective achievements</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                      <tr class="clickable collapse row4" data-toggle="collapse" id="row44" data-target=".row44">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Mobilizes stakeholders through active networking</td>
+                      <td>0</td>
+                      <td>4.25</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row44">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Builds his/her network within and outside L’Oréal to achieve business objectives</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row44">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Encourages and assists others to develop people network</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                    <tr class="clickable" data-toggle="collapse" id="row5" data-target=".row5">
+                    <td><i class="glyphicon glyphicon-plus"></i></td>
+                    <td>INNOVATOR</td>
+                    <td>0</td>
+                    <td>4</td>
+                    <td>4.46</td>
+                    </tr>
+
+                      <tr class="clickable collapse row5" data-toggle="collapse" id="row51" data-target=".row51">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Puts the consumer as the central focus</td>
+                      <td>0</td>
+                      <td>4</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row51">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Ensures and enables teams to stay connected with evolving consumer needs</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row51">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Inspires teams through his/her keen focus on consumers</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row51">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Shows interest in the culture and rituals of beauty and uses it toachieve local relevance</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                      <tr class="clickable collapse row5" data-toggle="collapse" id="row52" data-target=".row52">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Challenges the status quo and strives for excellence</td>
+                      <td>0</td>
+                      <td>4</td>  
+                      <td>4.5</td>
+                      </tr>
+
+                        <tr class="collapse row52">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Encourage teams to reflect on the ways of working and to continuously improve </td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row52">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Thinks out of the box and generates innovative strategies</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr>
+
+                      <tr class="clickable collapse row5" data-toggle="collapse" id="row53" data-target=".row53">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Innovates beyond the product</td>
+                      <td>0</td>
+                      <td>4</td>  
+                      <td>4.33</td>
+                      </tr>
+
+                        <tr class="collapse row53">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Drives innovation with focus on consumer insights</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row53">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Makes sure his/her team integrates new technologies to enhance the consumer beauty journey</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row53">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Encourages a comprehensive approach of innovation, including all key components from start</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                      <tr class="clickable collapse row5" data-toggle="collapse" id="row54" data-target=".row54">
+                      <td><i class="glyphicon glyphicon-plus"></i></td>
+                      <td>Seizes what is just starting and opens new ventures</td>
+                      <td>0</td>
+                      <td>4</td>  
+                      <td>4.5</td>
+                      </tr>            
+
+                        <tr class="collapse row54">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Identifies beauty trends as they emerge and champions promising ideas</td>
+                        <td>0</td>
+                        <td>3.88</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row54">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Prefers to take risks rather than missing opportunities</td>
+                        <td>0</td>
+                        <td>3.84</td>  
+                        <td>4.5</td>
+                        </tr><tr class="collapse row54">
+                        <td><i class="glyphicon glyphicon-minus"></i></td>
+                        <td>Stimulates curiosity and external focus</td>
+                        <td>0</td>
+                        <td>4.5</td>  
+                        <td>4.67</td>
+                        </tr>
+
+                  </tbody>
         </table>
       </div> <!-- /container -->
     </div>
@@ -498,27 +775,15 @@ chart.render();
         <tbody>
           <tr class="aggregate">
             <td>Self</td>
-            <?php
-              try {
-                $selfSum = round($selfSum / count($selfScore), 2);
-                $teamSum = round($teamSum / count($teamScore), 2);
-                $managerSum = round($managerSum / count($managerScore), 2);
-              } catch (Exception $e) {
-                $selfSum = 0;
-                $teamSum = 0;
-                $managerSum = 0;
-              }
-              
-            ?>
-            <td><?php echo $selfSum; ?></td>
+                        <td>0</td>
           </tr>
           <tr class="aggregate">
             <td>Team</td>
-            <td><?php echo $teamSum; ?></td>
+            <td>3.89</td>
           </tr>
           <tr class="aggregate">
             <td>Others</td>
-            <td><?php echo $managerSum; ?></td>
+            <td>4.46</td>
           </tr>  
         </tbody>
       </table>
@@ -531,4 +796,3 @@ chart.render();
   <script src="../js/bootstrap.min.js"></script>
 </body>
 </html>
-
