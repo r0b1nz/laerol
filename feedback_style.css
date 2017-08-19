@@ -45,21 +45,21 @@ header h4{
 	margin-bottom: 20px;
 }
 
-form h3{
-	background-color: #98E698;
-	padding: 1%;
+thead th h4{
 	font-weight: bold;
+	color: #73344d;
 }
 
-.questions{
-	margin: 3%;
+tbody .clickable td{
+	font-weight: bold;
+	color: #ed6c9e;
 }
 
-form h4{
-	color: #ffa500;
-	font-weight: bold;
-	margin-bottom: 3%;
+tbody .collapse td{
+	color: #632d42;	
 }
-.canvasjs-chart-credit {
-   display: none;
+
+tbody .aggregate td{
+	font-weight: bold;
+	color: #ed6c9e;	
 }

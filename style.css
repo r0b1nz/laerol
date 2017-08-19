@@ -59,3 +59,7 @@ table .do_center{
 .form_div{
 	background-color: white;
 }
+
+.canvasjs-chart-credit {
+   display: none;
+}
