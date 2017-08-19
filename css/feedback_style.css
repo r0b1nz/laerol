@@ -63,3 +63,7 @@ tbody .aggregate td{
 	font-weight: bold;
 	color: #ed6c9e;	
 }
+
+.canvasjs-chart-credit {
+   display: none;
+}
