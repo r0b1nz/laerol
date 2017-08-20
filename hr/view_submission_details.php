@@ -11,8 +11,14 @@
 
   // Get the ReviewCount
   // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
-  $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
-  $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+  if (!is_null($_GET['rc']) && !is_nan($_GET['rc'])) {
+    $reviewCount = securityPipe($_GET['rc']);
+    // echo 'Count;' . $reviewCount;
+  } else {
+    $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
+    $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+  }
+
 
   // Get emp level
   $level = 2;
