@@ -78,7 +78,7 @@
         echo '  <th scope="row">' . $managerCounter . '</th>';
         echo '  <td class="do_center">' . $manager['designation'] . '</td>';
         echo '  <td class="do_center"><a href="feedback.php?for=' . $manager['designation'] . $rc . '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>';
-        echo '  <td class="do_center"><a href="view_submission_details.php?for=' . $manager['designation'] . '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>';
+        echo '  <td class="do_center"><a href="view_submission_details.php?for=' . $manager['designation']  . $rc .  '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>';
         echo '</tr>';
         $managerCounter++;
       }
