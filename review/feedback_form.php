@@ -691,17 +691,17 @@ the how and why of events</label><br>
 
       <h3 align="center">Optional Feedback</h3>
       <div class="questions">
-      <h4 align="center">Question 1</h4>
+      <h4 align="center">What are some Good Qualities of the person ?</h4>
         <div class="form-group">
           <textarea rows="5" cols="150" name="comment1" class="form-group" form="feedbackform"></textarea>
         </div>
       
-        <h4 align="center">Question 2</h4>
+        <h4 align="center">What all qualities need improvement ?</h4>
         <div class="form-group">
           <textarea rows="5" cols="150" name="comment2" class="form-group" form="feedbackform"></textarea>
         </div>
         
-        <h4 align="center">Question 3</h4>
+        <h4 align="center">What things should be stopped by the person ?</h4>
         <div class="form-group">
           <textarea rows="5" cols="150" name="comment3" class="form-group" form="feedbackform"></textarea>
         </div>

@@ -476,13 +476,20 @@ chart.render();
   <header>
     <h1>L'ORÉAL: <?php echo $emp ?></h1>
     <h4>India</h4>
-    <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a>
-    <a href="../hr/view_feedback.php"><button class="btn btn-sm">Back</button></a>
+    <a class="hidden-print" href="../hr/choose_function.php"><button class="btn btn-sm hidden-print">Home</button></a>
+    <a class="hidden-print" href="../hr/view_feedback.php"><button class="btn btn-sm hidden-print">Back</button></a>
   </header>
   <div class="row jumbotron" style="background-color: white;">
     <div class="col-lg-12">
       <div class="container">
-      <button class="btn btn-sm" data-toggle="collapse" data-target=".collapse">Expand/Collapse</button>
+      <button class="btn btn-sm hidden-print" id="btnExp" data-toggle="collapse" data-target=".collapse">Expand/Collapse</button>
+      <button class="btn btn-primary hidden-print" onclick="myFunction()"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print</button>
+      <script type="text/javascript">
+        function myFunction() {
+            document.getElementById('btnExp').click();
+            window.print();
+          }
+      </script>
         <table class="table table-responsive table-hover">
           <thead>
                 <tr><th></th><th><h4>Competency</h4></th><th><h4>Self</h4></th><th><h4>Team</h4></th><th><h4>Others</h4></th></tr>
@@ -1201,19 +1208,22 @@ the how and why of events
           }
         ?>
         <div class="freeText">
-          <p>Question 1 - </p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#ques1">View Responses</button>
+          <br><br>
+          <p>What are some Good Qualities of the person ?</p><button type="button" class="btn btn-info hidden-print" data-toggle="collapse" data-target="#ques1">View Responses</button>
           <div id="ques1" class="collapse">
             <?php
               echo join('; ', $ques1);
             ?>
           </div>
-          <p>Question 2 - </p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#ques2">View Responses</button>
+          <br><br>
+          <p>What all qualities need improvement ?</p><button type="button" class="btn btn-info hidden-print" data-toggle="collapse" data-target="#ques2">View Responses</button>
           <div id="ques2" class="collapse">
             <?php
               echo join('; ', $ques2);
             ?>
           </div>
-          <p>Question 3 - </p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#ques3">View Responses</button>
+          <br><br>
+          <p>What things should be stopped by the person ?</p><button type="button" class="btn btn-info hidden-print" data-toggle="collapse" data-target="#ques3">View Responses</button>
           <div id="ques3" class="collapse">
             <?php
               echo join('; ', $ques3);
