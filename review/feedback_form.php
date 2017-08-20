@@ -33,58 +33,13 @@
   $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
 
   // if the feedback is already done.
-  $repeatSQL = 'SELECT 1 FROM feedback WHERE review_count = ' . $reviewCount . '
+  $repeatSQL = 'SELECT 1 FROM feedbacks WHERE review_count = ' . $reviewCount . '
                 AND designation = \'' . $_SESSION["feedbackFor"] . '\' 
                 AND reviewer = \'' . $user . '\'';
   if ($conn->query($repeatSQL)->num_rows > 0) {
     echo 'Feedback already submitted. Please go back and give feedback for another employee';
     exit();
   }
-
-  /*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $prefix = 'competency';
-    $scores = array();
-    for ($c = 1; $c <= $feedbackQuestions; $c++) { 
-      $sum = 0.0;
-      $totalQuestions = 0;
-      for ($q=1; $q < 6; $q++) { 
-        $fieldName = $prefix . $c . '_q' . $q;
-        $answer = 0;
-        
-        if (isset($_POST[$fieldName])) {
-          $answer = securityPipe($_POST[$fieldName]);
-          $totalQuestions++;
-          $sum = $sum + $answer;
-        }        
-        // echo $fieldName . ':' . $answer . '<br>'; // No values from the view
-      }
-      $avg = $sum / $totalQuestions;
-      $scores[$c - 1] = round($avg, 2);
-    }
-
-    $avgScore = array_sum($scores) / $feedbackQuestions;
-    $insertSQL = 'INSERT INTO emp_feedback VALUES(' . $reviewCount . ', 
-                    \'' . $feedbackFor . '\', \'' . $user . '\', 
-                    ' . $scores[0] . ', '. $scores[1] . ', 
-                    ' . $scores[2] . ', '. $scores[3] . ', 
-                    ' . $scores[4] . ', ' . $avgScore . ')';
-    // echo $insertSQL;
-    if ($conn->query($insertSQL) === FALSE) {
-      echo '<script>alert("Error in saving feedback")</script>';
-    } else {
-      // echo '<script>alert("Thank you for the feedback")</script>';
-      // header('Location: choose_feedback.php');
-      echo '<script type="text/javascript">
-        alertFunc();
-        function alertFunc()
-        {
-          alert("Successfully Submitted Review");
-          location.href = "../review/choose_feedback.php"
-        }
-        </script>';
-    }
-  }*/
-
 
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // vars: competency1_s1_q1
@@ -93,69 +48,45 @@
     $maxQPerSection = 5;
 
     for ($c=1; $c <= $competencyCount = 5; $c++) { 
-      $section = array();
-      $totalSectionScore = 0;
-      $minSection = 10000;
-      $maxSection = -1;
-      // loop sections
       for ($s=1; $s <= $sections ; $s++) { 
-        // $min = 10000;
-        $min = $minSection;
-        // $max = -1;
-        $max = $maxSection;
-        $totalScore = 0;
-        $totalQuestions = 0;
-
         for ($q=1; $q <= $maxQPerSection ; $q++) { 
           $radioName = 'competency' . $c . '_s' . $s . '_q' . $q;
           if (isset($_POST[$radioName])) {
-            if ($_POST[$radioName] > $max)
-              $max = $_POST[$radioName];
-            if ($_POST[$radioName] < $min)
-              $min = $_POST[$radioName];
-            $totalQuestions++;
-            $totalScore = $totalScore + $_POST[$radioName];
+            $answer = $_POST[$radioName];
+            // Enter value to db
+            $insertAnswer = "INSERT INTO feedbacks VALUES ({$reviewCount}, '{$feedbackFor}', '{$user}',
+                                                            {$c}, {$s}, {$q}, {$answer})";
+            // echo $insertAnswer . '<br>';
+            $conn->query($insertAnswer);
           }
         }
-
-        if ($totalQuestions == 0)
-          continue;
-        $sectionScore = round($totalScore / $totalQuestions, 2);
-        $totalSectionScore = $totalSectionScore + $sectionScore;
-        if ($sectionScore < $minSection)
-          $minSection = $sectionScore;
-        if ($sectionScore > $maxSection)
-          $maxSection = $sectionScore;
-
-
-        // array_push($section, $sectionScore . ';' . $min . ';' . $max);
-        array_push($section, $sectionScore);
-        $minSection = $min;
-        $maxSection = $max;
-      }
-      //make SQL and push ($section[], $totalSectionScore/$sections, $minSection, $maxSection) 
-      $competencyScore = round($totalSectionScore / $sections, 2);
-      $insertSQL = "INSERT INTO feedback VALUES ({$reviewCount}, '{$feedbackFor}', '{$user}', 
-                                                  {$c}, '{$section[0]}', '{$section[1]}',
-                                                  '{$section[2]}', '{$section[3]}',
-                                                  '{$competencyScore}', {$minSection}, {$maxSection})";
-      // echo $insertSQL;
-      if ($conn->query($insertSQL) === FALSE) {
-        echo '<script>alert("Error in saving feedback")</script>';
-      } else {
-        // echo '<script>alert("Thank you for the feedback")</script>';
-        // header('Location: choose_feedback.php');
-        echo '<script type="text/javascript">
-          alertFunc();
-          function alertFunc()
-          {
-            alert("Successfully Submitted Review");
-            location.href = "../review/choose_feedback.php"
-          }
-          </script>';
       }
     }
+
+    $comment1 = $_POST['comment1'];
+    $comment2 = $_POST['comment2'];
+    $comment3 = $_POST['comment3'];
+
+    if (!(empty($comment1) && empty($comment2) && empty($comment3))) {
+        $sql = "INSERT INTO feedbacks_subjective VALUES ({$reviewCount}, '{$feedbackFor}', '{$user}', 
+                                                            '{$comment1}', '{$comment2}', '{$comment3}')";
+        $conn->query($sql);
+      }
+
+
+
+    
+    echo '<script type="text/javascript">
+    alertFunc();
+    function alertFunc()
+    {
+      alert("Successfully Submitted Review");
+      location.href = "../review/choose_feedback.php"
+    }
+    </script>';
+      exit();
   }
+
 
 
 ?>
@@ -762,17 +693,17 @@ the how and why of events</label><br>
       <div class="questions">
       <h4 align="center">Question 1</h4>
         <div class="form-group">
-          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+          <textarea rows="5" cols="150" name="comment1" class="form-group" form="feedbackform"></textarea>
         </div>
       
         <h4 align="center">Question 2</h4>
         <div class="form-group">
-          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+          <textarea rows="5" cols="150" name="comment2" class="form-group" form="feedbackform"></textarea>
         </div>
         
         <h4 align="center">Question 3</h4>
         <div class="form-group">
-          <textarea rows="5" cols="150" name="comment" class="form-group" form="feedbackform"></textarea>
+          <textarea rows="5" cols="150" name="comment3" class="form-group" form="feedbackform"></textarea>
         </div>
       </div>
 

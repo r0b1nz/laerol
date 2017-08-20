@@ -9,11 +9,27 @@
 
   // Get the ReviewCount
   // Update: INSERT INTO `loreal_hr_feedback`.`review_cycle` (`date`, `review_count`) VALUES (CURRENT_DATE(), NULL);
-  $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
-  $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['rc'];
+  // $reviewCountSQL = 'SELECT max(review_count) as rc FROM review_cycle';
+  $reviewCountSQL = 'SELECT * FROM REVIEW_CYCLE ORDER BY review_count desc LIMIT 1';
+
+  // $reviewCount = $conn->query($reviewCountSQL)->fetch_assoc()['review_count'];
+
+  $result = $conn->query($reviewCountSQL);
+  if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $reviewCount = $row['review_count'];
+    $date = $row['date'];
+  }
 
   $getManagers = 'SELECT DISTINCT a.designation as designation FROM emp_info a, emp_info b WHERE a.designation = b.manager AND a.level <> 0';
   $result = $conn->query($getManagers);
+
+  $rc = $reviewCount;
+  if (!is_null($_GET['ReviewCycleNumber'])) {
+    if (!is_nan($_GET['ReviewCycleNumber'])) {
+      $rc = securityPipe($_GET['ReviewCycleNumber']);
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html>
@@ -32,10 +48,11 @@
     <h1 style="color:white;font-weight:bold;margin-bottom: 0px;padding-bottom: 0px;">L'OREAL</h1><br><h4 style="color:white;font-weight:bold;margin-top: 0px;margin-bottom: 20px;">India</h4>
     <a href="../hr/choose_function.php"><button class="btn btn-sm">Home</button></a><br><br>
     <form action="../hr/view_feedback.php">
-    <p style="color: white">Review Cycle Number</p>
+    <p style="color: white">Review Cycle Number: <strong><?php echo $rc . ' </strong><br>Started on: <strong>' . $date; $rc = '&rc=' . $rc; ?></strong></p>
     <select name="ReviewCycleNumber">
-      <option value="1">1</option>
-      <option value="2">2</option>
+      <?php for ($i=1; $i <= $reviewCount; $i++) { 
+        echo '<option value="' . $i . '">' . $i . '</option>';
+      } ?>
     </select>&nbsp;&nbsp;&nbsp;
     <input class="btn btn-sm" type="submit">
   </form>
@@ -52,28 +69,22 @@
         </tr>
       </thead>
       <tbody>
-   TEMPLATE for reference. 
-TODO: Add hyperlink to the button
-        <tr>
-          <th scope="row">1</th>
-          <td class="do_center">Plant Director</td>
-          <td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>
-          <td class="do_center"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>
-        </tr>
 
-<!--         <?php
-          if ($result->num_rows > 0) {
-            $managerCounter = 1;
-            while ($manager = $result->fetch_assoc()) {
-              echo '<tr>';
-              echo '<th scope="row">' . $managerCounter . '</th>';
-              echo '<td class="do_center">' . $manager['designation'] . '</td>';
-              echo '<td class="do_center"><a href="feedback.php?for=' . $manager['designation'] . '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></a></td>';
-              echo '</tr>';
-              $managerCounter++;
-            }
-          }
-        ?> -->
+    <?php
+      if ($result->num_rows > 0) {
+      $managerCounter = 1;
+      while ($manager = $result->fetch_assoc()) {
+        echo '<tr>';
+        echo '  <th scope="row">' . $managerCounter . '</th>';
+        echo '  <td class="do_center">' . $manager['designation'] . '</td>';
+        echo '  <td class="do_center"><a href="feedback.php?for=' . $manager['designation'] . $rc . '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>';
+        echo '  <td class="do_center"><a href="view_submission_details.php?for=' . $manager['designation'] . '"><button type="button" class="btn btn-danger" value="designationOfEmployee">View</button></td>';
+        echo '</tr>';
+        $managerCounter++;
+      }
+    }
+ ?>
+
 
 
       </tbody>
