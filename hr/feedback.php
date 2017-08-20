@@ -1209,21 +1209,21 @@ the how and why of events
         ?>
         <div class="freeText">
           <br><br>
-          <p>Question 1 - </p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#ques1">View Responses</button>
+          <p>What are some Good Qualities of the person ?</p><button type="button" class="btn btn-info hidden-print" data-toggle="collapse" data-target="#ques1">View Responses</button>
           <div id="ques1" class="collapse">
             <?php
               echo join('; ', $ques1);
             ?>
           </div>
           <br><br>
-          <p>Question 2 - </p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#ques2">View Responses</button>
+          <p>What all qualities need improvement ?</p><button type="button" class="btn btn-info hidden-print" data-toggle="collapse" data-target="#ques2">View Responses</button>
           <div id="ques2" class="collapse">
             <?php
               echo join('; ', $ques2);
             ?>
           </div>
           <br><br>
-          <p>Question 3 - </p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#ques3">View Responses</button>
+          <p>What things should be stopped by the person ?</p><button type="button" class="btn btn-info hidden-print" data-toggle="collapse" data-target="#ques3">View Responses</button>
           <div id="ques3" class="collapse">
             <?php
               echo join('; ', $ques3);
